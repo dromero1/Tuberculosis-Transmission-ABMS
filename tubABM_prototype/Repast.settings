@@ -1,0 +1,29 @@
+<simphony.settings.SettingsRegistry serialization="custom">
+  <unserializable-parents/>
+  <hashtable>
+    <default>
+      <loadFactor>0.75</loadFactor>
+      <threshold>11</threshold>
+    </default>
+    <int>15</int>
+    <int>9</int>
+    <string>SettingsFileName</string>
+    <string>Repast.settings</string>
+    <string>Spreadsheet.licenseAccepted</string>
+    <boolean>true</boolean>
+    <string>RStudio.licenseAccepted</string>
+    <boolean>true</boolean>
+    <string>RStudio.home.2.6.0</string>
+    <string>C:\Program Files\RStudio\bin\rstudio.exe</string>
+    <string>Spreadsheet.home.2.6.0</string>
+    <string>C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE</string>
+    <string>SettingsRegistryId</string>
+    <string>Repast.registry</string>
+    <string>LastLoadedScenario</string>
+    <string>E:\eclipse-workspace\tubABM_prototype\tubABM_prototype.rs</string>
+    <string>Spreadsheet.home</string>
+    <string>C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE</string>
+    <string>RStudio.home</string>
+    <string>C:\Program Files\RStudio\bin\rstudio.exe</string>
+  </hashtable>
+</simphony.settings.SettingsRegistry>
