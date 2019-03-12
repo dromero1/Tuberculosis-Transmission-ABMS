@@ -4,7 +4,6 @@
 package agents;
 
 import java.util.List;
-
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
