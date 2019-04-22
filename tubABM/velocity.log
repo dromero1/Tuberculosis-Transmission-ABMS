@@ -339,3 +339,5 @@
 2019-04-21 23:47:17,191 - Velocimacro : autoload off  : VM system will not automatically reload global library macros
 2019-04-21 23:47:17,191 - Velocimacro : initialization complete.
 2019-04-21 23:47:17,191 - Velocity successfully started.
+2019-04-21 23:48:02,064 - ResourceManager : found repast/simphony/scenario/Scenario.vt with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2019-04-21 23:48:48,224 - ResourceManager : found repast/simphony/scenario/Scenario.vt with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
