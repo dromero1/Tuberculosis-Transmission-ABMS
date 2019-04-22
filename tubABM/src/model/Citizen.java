@@ -16,7 +16,6 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
-import simulation.SimulationParameters;
 
 /**
  * @author david
@@ -52,11 +51,11 @@ public class Citizen {
 		ScheduleParameters params;
 
 		// Schedule wake up event
-		params = ScheduleParameters.createRepeating(wakeUpTime, SimulationParameters.DAY_IN_HOURS);
+		params = ScheduleParameters.createRepeating(wakeUpTime, ModelParameters.DAY_IN_HOURS);
 		schedule.schedule(params, this, "wakeUp");
 
 		// Schedule return home event
-		params = ScheduleParameters.createRepeating(wakeUpTime + workTime, SimulationParameters.DAY_IN_HOURS);
+		params = ScheduleParameters.createRepeating(wakeUpTime + workTime, ModelParameters.DAY_IN_HOURS);
 		schedule.schedule(params, this, "returnHome");
 
 		if (diseaseStage == DiseaseStage.INFECTED) {
@@ -119,8 +118,8 @@ public class Citizen {
 	}
 
 	private boolean isCitizenGettingExposed(int infectedCount) {
-		double p = SimulationParameters.AVG_PULMONARY_VENTILATION_RATE;
-		double phi = SimulationParameters.AVG_PATIENT_QUANTA_PRODUCTION;
+		double p = ModelParameters.AVG_PULMONARY_VENTILATION_RATE;
+		double phi = ModelParameters.AVG_PATIENT_QUANTA_PRODUCTION;
 
 		// Calculate probability of getting exposed
 		double probability = InfectionProbabilityCalculator.calculateProbability(infectedCount, p, 3.0, phi, 75.0);
@@ -138,15 +137,15 @@ public class Citizen {
 		double yearlyProbability = Math.max(0.1 + (-2.6595e-11) * Math.pow(t, 2), 0);
 
 		// Weekly probability yP = 1-(1-wP)^52
-		double weeklyProbability = 1 - Math.pow(1 - yearlyProbability, 1.0 / 52.0);
+		double weeklyProbability = 1 - Math.pow(1 - yearlyProbability, 1.0 / ModelParameters.WEEKS_IN_YEAR);
 
 		// Adjust probability to risk factors
 		if (isInmunodepressed)
-			weeklyProbability *= 10;
+			weeklyProbability *= ModelParameters.IMMUNODEFICIENCY_FOLD;
 		if (smokes)
-			weeklyProbability *= 1.5;
+			weeklyProbability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
 		if (drinksAlcohol)
-			weeklyProbability *= 1.5;
+			weeklyProbability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
 
 		double random = RandomHelper.nextDoubleFromTo(0, 1);
 
@@ -161,9 +160,9 @@ public class Citizen {
 	private void scheduleInfectionEvaluationEvents() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		int hoursToInitialEvaluation = 2 * SimulationParameters.WEEK_IN_HOURS; // 2 weeks later
+		int hoursToInitialEvaluation = ModelParameters.WEEK_IN_HOURS;
 		double startTime = currentTick + hoursToInitialEvaluation;
-		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, SimulationParameters.WEEK_IN_HOURS);
+		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, ModelParameters.WEEK_IN_HOURS);
 		evaluateInfectionAction = schedule.schedule(params, this, "evaluateInfection");
 	}
 

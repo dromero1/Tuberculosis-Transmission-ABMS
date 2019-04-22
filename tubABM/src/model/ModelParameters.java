@@ -1,7 +1,11 @@
-package simulation;
+package model;
 
-public class SimulationParameters {
+public class ModelParameters {
 
+	// Taken from ...
+	public static final double IMMUNODEFICIENCY_FOLD = 10;
+	public static final double RISK_FACTOR_ADJUSTMENT = 1.5;
+	
 	// Taken from Beggs et. al. (2003)
 	public static final double AVG_PATIENT_QUANTA_PRODUCTION = 1.25; // droplets per hour
 	
@@ -12,5 +16,6 @@ public class SimulationParameters {
 	public static final int DAY_IN_HOURS = 24;
 	public static final int WEEK_IN_HOURS = 168;
 	public static final int YEAR_IN_HOURS = 8760;
+	public static final int WEEKS_IN_YEAR = 52;
 	
 }
