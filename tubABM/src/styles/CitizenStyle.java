@@ -16,17 +16,19 @@ import model.DiseaseStage;
 public class CitizenStyle extends DefaultStyleOGL2D {
 
 	@Override
-    public Color getColor(Object object) {
-        Citizen citizen = (Citizen) object;
-        int diseaseStage = citizen.getDiseaseStage();
-        if (diseaseStage == DiseaseStage.EXPOSED) {
-            return Color.BLACK;
-        } else if (diseaseStage == DiseaseStage.INFECTED) {
-        	return Color.RED;
-        } else if (diseaseStage == DiseaseStage.RECOVERED) {
-        	return Color.GREEN;
-        }
+	public Color getColor(Object object) {
+		Citizen citizen = (Citizen) object;
+		int diseaseStage = citizen.getDiseaseStage();
+		if (diseaseStage == DiseaseStage.EXPOSED) {
+			return Color.BLACK;
+		} else if (diseaseStage == DiseaseStage.INFECTED) {
+			return Color.RED;
+		} else if (diseaseStage == DiseaseStage.RECOVERED) {
+			return Color.GREEN;
+		} else if (diseaseStage == DiseaseStage.ON_TREATMENT) {
+			return Color.ORANGE;
+		}
 		return Color.BLUE;
-    }
-	
+	}
+
 }

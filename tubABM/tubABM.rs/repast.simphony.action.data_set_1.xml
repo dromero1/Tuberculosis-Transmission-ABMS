@@ -51,6 +51,15 @@
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
+    <entry>
+      <string>OnTreatment</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>OnTreatment</id>
+        <className>model.Citizen</className>
+        <methodName>isOnTreatment</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
   </methodDataSources>
   <countSources class="linked-hash-map"/>
   <customNADataSources class="linked-hash-map"/>

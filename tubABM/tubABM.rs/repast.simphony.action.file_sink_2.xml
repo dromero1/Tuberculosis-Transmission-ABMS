@@ -8,6 +8,7 @@
     <string>Exposed</string>
     <string>Infected</string>
     <string>Recovered</string>
+    <string>OnTreatment</string>
   </sourceIds>
   <fileName>./output/Run.txt</fileName>
   <addTimeStamp>true</addTimeStamp>

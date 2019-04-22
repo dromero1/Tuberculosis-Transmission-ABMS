@@ -4,11 +4,14 @@
 package model;
 
 import java.util.List;
+
+import cern.jet.random.Exponential;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.essentials.RepastEssentials;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
 import repast.simphony.random.RandomHelper;
@@ -31,7 +34,7 @@ public class Citizen {
 	private int workTime;
 	private int diseaseStage;
 	private double expositionTick;
-	private boolean isInmunodepressed;
+	private boolean isInmunodepressed; // TODO Fill risk factors from database
 	private boolean smokes;
 	private boolean drinksAlcohol;
 	private ISchedulableAction infectAction;
@@ -43,7 +46,7 @@ public class Citizen {
 		this.diseaseStage = diseaseStage;
 		this.wakeUpTime = RandomHelper.nextIntFromTo(ModelParameters.INITIAL_WAKEUP_TIME,
 				ModelParameters.FINAL_WAKEUP_TIME);
-		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORKTIME, ModelParameters.MAX_WORKTIME);
+		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORK_TIME, ModelParameters.MAX_WORK_TIME);
 		scheduleRepeatingEvents();
 	}
 
@@ -52,11 +55,11 @@ public class Citizen {
 		ScheduleParameters params;
 
 		// Schedule wake up event
-		params = ScheduleParameters.createRepeating(wakeUpTime, ModelParameters.DAY_IN_HOURS);
+		params = ScheduleParameters.createRepeating(wakeUpTime, ModelParameters.HOURS_IN_DAY);
 		schedule.schedule(params, this, "wakeUp");
 
 		// Schedule return home event
-		params = ScheduleParameters.createRepeating(wakeUpTime + workTime, ModelParameters.DAY_IN_HOURS);
+		params = ScheduleParameters.createRepeating(wakeUpTime + workTime, ModelParameters.HOURS_IN_DAY);
 		schedule.schedule(params, this, "returnHome");
 
 		if (diseaseStage == DiseaseStage.INFECTED) {
@@ -80,8 +83,9 @@ public class Citizen {
 		List<GridCell<Citizen>> gridCells = nghCreator.getNeighborhood(true);
 
 		for (GridCell<Citizen> cell : gridCells) {
+			int infectedCount = countInfectedPeople(cell.items());
 			for (Citizen citizen : cell.items()) {
-				if (citizen.diseaseStage == DiseaseStage.SUSCEPTIBLE && isCitizenGettingExposed(1))
+				if (citizen.diseaseStage == DiseaseStage.SUSCEPTIBLE && isCitizenGettingExposed(infectedCount))
 					citizen.setExposed();
 			}
 		}
@@ -97,14 +101,19 @@ public class Citizen {
 		diseaseStage = DiseaseStage.INFECTED;
 		scheduleInfectionEvents();
 		unscheduleEvents(evaluateInfectionAction);
-		if (isCitizenGettingRecovered()) {
-			scheduleRecoverEvent();
-		}
+		double hoursToDiagnosis = calculateHoursToDiagnosis();
+		scheduleDiagnosisEvent(hoursToDiagnosis);
 	}
-
+	
+	public void diagnosed() {
+		diseaseStage = DiseaseStage.ON_TREATMENT;
+		unscheduleEvents(infectAction);
+		//TODO Temporary - Recovery may depend on many things
+		scheduleRecoverEvent(4320);
+	}
+	
 	public void setRecovered() {
 		diseaseStage = DiseaseStage.RECOVERED;
-		unscheduleEvents(infectAction);
 	}
 
 	public void evaluateInfection() {
@@ -122,8 +131,13 @@ public class Citizen {
 		double p = ModelParameters.AVG_PULMONARY_VENTILATION_RATE;
 		double phi = ModelParameters.AVG_PATIENT_QUANTA_PRODUCTION;
 
+		// Get necessary simulation parameters
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		double aVr = params.getDouble("AverageRoomVentilationRate");
+		double aRv = params.getDouble("AverageRoomVolume");
+
 		// Calculate probability of getting exposed
-		double probability = InfectionProbabilityCalculator.calculateProbability(infectedCount, p, 3.0, phi, 75.0);
+		double probability = InfectionProbabilityCalculator.calculateProbability(infectedCount, p, aVr, phi, aRv);
 
 		double random = RandomHelper.nextDoubleFromTo(0, 1);
 
@@ -152,18 +166,26 @@ public class Citizen {
 
 		return random <= weeklyProbability;
 	}
-
-	private boolean isCitizenGettingRecovered() {
-		// TODO Calculate the probability of getting recovered
-		return false;
+	
+	private double calculateHoursToDiagnosis() {
+		// Get mean diagnosis delay parameter
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		double mDd = params.getDouble("MeanDiagnosisDelay") * ModelParameters.HOURS_IN_DAY;
+		
+		// Create exponential function
+		double lambda = 1 / mDd;
+		Exponential exp = RandomHelper.createExponential(lambda);
+		
+		// Get random hours to diagnosis
+		return exp.nextDouble();
 	}
 
 	private void scheduleInfectionEvaluationEvents() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		int hoursToInitialEvaluation = ModelParameters.WEEK_IN_HOURS;
+		double hoursToInitialEvaluation = ModelParameters.HOURS_IN_WEEK;
 		double startTime = currentTick + hoursToInitialEvaluation;
-		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, ModelParameters.WEEK_IN_HOURS);
+		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, ModelParameters.HOURS_IN_WEEK);
 		evaluateInfectionAction = schedule.schedule(params, this, "evaluateInfection");
 	}
 
@@ -174,21 +196,37 @@ public class Citizen {
 		infectAction = schedule.schedule(params, this, "infect");
 	}
 
-	private void scheduleRecoverEvent() {
+	private void scheduleDiagnosisEvent(double hoursToDiagnosis) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		// TODO Calculate the hours to recover
-		int hoursToRecover = 8030;
-		double startTime = currentTick + hoursToRecover;
+		double startTime = currentTick + hoursToDiagnosis;
+		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
+		schedule.schedule(params, this, "diagnosed");
+	}
+
+	private void scheduleRecoverEvent(double hoursToRecovery) {
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
+		double startTime = currentTick + hoursToRecovery;
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
 		schedule.schedule(params, this, "setRecovered");
 	}
-
+	
 	private void unscheduleEvents(ISchedulableAction action) {
 		if (action != null) {
 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 			schedule.removeAction(action);
 		}
+	}
+
+	private int countInfectedPeople(Iterable<Citizen> citizens) {
+		int count = 0;
+		for (Citizen citizen : citizens) {
+			if (citizen.diseaseStage == DiseaseStage.INFECTED) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public int getDiseaseStage() {
@@ -227,6 +265,10 @@ public class Citizen {
 
 	public int isRecovered() {
 		return (diseaseStage == DiseaseStage.RECOVERED) ? 1 : 0;
+	}
+	
+	public int isOnTreatment() {
+		return (diseaseStage == DiseaseStage.ON_TREATMENT) ? 1 : 0;
 	}
 
 }

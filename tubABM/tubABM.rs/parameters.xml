@@ -7,21 +7,39 @@
 									
 		/>
 				<parameter name="InfectedCount" displayName="Infected Count" type="int" 
-						defaultValue="100" 
+						defaultValue="10" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="AverageRoomVolume" displayName="Average Room Volume (m3)" type="double" 
+						defaultValue="75.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 				<parameter name="ExposedCount" displayName="Exposed Count" type="int" 
-						defaultValue="2000" 
+						defaultValue="1000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 				<parameter name="SusceptibleCount" displayName="Susceptible Count" type="int" 
-						defaultValue="50000" 
+						defaultValue="1000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="AverageRoomVentilationRate" displayName="Average Room Ventilation Rate (AC/h)" type="double" 
+						defaultValue="3.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="MeanDiagnosisDelay" displayName="Mean Diagnosis Delay (days)" type="double" 
+						defaultValue="45.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 		</parameters>
