@@ -5,8 +5,6 @@ package model;
 
 import java.util.List;
 
-import org.apache.ivy.plugins.matcher.MapMatcher;
-
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
@@ -135,7 +133,7 @@ public class Citizen {
 
 	private boolean isCitizenGettingInfected() {
 		// Calculate exposed time
-		double t = Math.max(RepastEssentials.GetTickCount(), 0) - expositionTick;
+		double t = Math.max(RepastEssentials.GetTickCount() - expositionTick, 0);
 
 		// Calculate probability of getting infected
 		double yearlyProbability = Math.max(0.1 + (-2.6595e-11) * Math.pow(t, 2), 0);
