@@ -4,7 +4,6 @@
 package model;
 
 import java.util.List;
-
 import cern.jet.random.Exponential;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
