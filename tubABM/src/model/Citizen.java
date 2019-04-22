@@ -41,8 +41,9 @@ public class Citizen {
 		this.space = space;
 		this.grid = grid;
 		this.diseaseStage = diseaseStage;
-		this.wakeUpTime = RandomHelper.nextIntFromTo(5, 8);
-		this.workTime = RandomHelper.nextIntFromTo(9, 11);
+		this.wakeUpTime = RandomHelper.nextIntFromTo(ModelParameters.INITIAL_WAKEUP_TIME,
+				ModelParameters.FINAL_WAKEUP_TIME);
+		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORKTIME, ModelParameters.MAX_WORKTIME);
 		scheduleRepeatingEvents();
 	}
 
@@ -133,7 +134,7 @@ public class Citizen {
 		// Calculate exposed time
 		double t = Math.max(RepastEssentials.GetTickCount() - expositionTick, 0);
 
-		// Calculate probability of getting infected
+		// Calculate probability of getting infected (Using interpolation function)
 		double yearlyProbability = Math.max(0.1 + (-2.6595e-11) * Math.pow(t, 2), 0);
 
 		// Weekly probability yP = 1-(1-wP)^52

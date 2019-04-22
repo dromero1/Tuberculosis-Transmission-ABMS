@@ -1,6 +1,12 @@
 package model;
 
 public class ModelParameters {
+	
+	// Intuition
+	public static final int INITIAL_WAKEUP_TIME = 5;
+	public static final int FINAL_WAKEUP_TIME = 8;
+	public static final int MIN_WORKTIME = 9; // hours per day
+	public static final int MAX_WORKTIME = 11; // hours per day
 
 	// Taken from ...
 	public static final double IMMUNODEFICIENCY_FOLD = 10;
