@@ -89,6 +89,10 @@ public class Citizen {
 			}
 		}
 	}
+	
+	public void setSusceptible() {
+		diseaseStage = DiseaseStage.SUSCEPTIBLE;
+	}
 
 	public void setExposed() {
 		diseaseStage = DiseaseStage.EXPOSED;
@@ -107,12 +111,12 @@ public class Citizen {
 	public void diagnosed() {
 		diseaseStage = DiseaseStage.ON_TREATMENT;
 		unscheduleEvents(infectAction);
-		//TODO Temporary - Recovery may depend on many things
-		scheduleRecoverEvent(4320);
+		scheduleRecoverEvent(ModelParameters.TREATMENT_DURATION);
 	}
 	
 	public void setRecovered() {
 		diseaseStage = DiseaseStage.RECOVERED;
+		scheduleFullRecoveryEvent(ModelParameters.TIME_TO_FULL_RECOVERY);
 	}
 
 	public void evaluateInfection() {
@@ -207,6 +211,14 @@ public class Citizen {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		double startTime = currentTick + hoursToRecovery;
+		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
+		schedule.schedule(params, this, "setRecovered");
+	}
+	
+	private void scheduleFullRecoveryEvent(double hoursToFullRecovery) {
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
+		double startTime = currentTick + hoursToFullRecovery;
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
 		schedule.schedule(params, this, "setRecovered");
 	}

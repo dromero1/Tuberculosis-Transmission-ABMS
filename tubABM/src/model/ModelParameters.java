@@ -14,6 +14,8 @@ public class ModelParameters {
 	// Taken from ...
 	public static final double IMMUNODEFICIENCY_FOLD = 10;
 	public static final double RISK_FACTOR_ADJUSTMENT = 1.5;
+	public static final double TREATMENT_DURATION = 4320; // hours
+	public static final double TIME_TO_FULL_RECOVERY = 17520; // hours
 
 	// Taken from Beggs et. al. (2003)
 	public static final double AVG_PATIENT_QUANTA_PRODUCTION = 1.25; // droplets per hour
