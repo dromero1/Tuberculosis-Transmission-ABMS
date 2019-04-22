@@ -33,7 +33,7 @@ public class Citizen {
 	private int workTime;
 	private int diseaseStage;
 	private double expositionTick;
-	private boolean isInmunodepressed; // TODO Fill risk factors from database
+	private boolean isInmunodepressed; //TODO Fill risk factors from database
 	private boolean smokes;
 	private boolean drinksAlcohol;
 	private ISchedulableAction infectAction;
@@ -220,7 +220,7 @@ public class Citizen {
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		double startTime = currentTick + hoursToFullRecovery;
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
-		schedule.schedule(params, this, "setRecovered");
+		schedule.schedule(params, this, "setSusceptible");
 	}
 	
 	private void unscheduleEvents(ISchedulableAction action) {
