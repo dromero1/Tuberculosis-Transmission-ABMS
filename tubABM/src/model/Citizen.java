@@ -32,7 +32,6 @@ public class Citizen {
 	private int wakeUpTime;
 	private int workTime;
 	private int diseaseStage;
-	private double expositionTick;
 	private boolean isInmunodepressed; //TODO Fill risk factors from database
 	private boolean smokes;
 	private boolean drinksAlcohol;
@@ -96,7 +95,6 @@ public class Citizen {
 
 	public void setExposed() {
 		diseaseStage = DiseaseStage.EXPOSED;
-		expositionTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		scheduleInfectionEvaluationEvents();
 	}
 
@@ -148,26 +146,19 @@ public class Citizen {
 	}
 
 	private boolean isCitizenGettingInfected() {
-		// Calculate exposed time
-		double t = Math.max(RepastEssentials.GetTickCount() - expositionTick, 0);
-
-		// Calculate probability of getting infected (Using interpolation function)
-		double yearlyProbability = Math.max(0.1 + (-2.6595e-11) * Math.pow(t, 2), 0);
-
-		// Weekly probability yP = 1-(1-wP)^52
-		double weeklyProbability = 1 - Math.pow(1 - yearlyProbability, 1.0 / ModelParameters.WEEKS_IN_YEAR);
-
+		double probability = ModelParameters.INFECTION_PROGRESSION_RATE;
+		
 		// Adjust probability to risk factors
 		if (isInmunodepressed)
-			weeklyProbability *= ModelParameters.IMMUNODEFICIENCY_FOLD;
+			probability *= ModelParameters.IMMUNODEFICIENCY_FOLD;
 		if (smokes)
-			weeklyProbability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
+			probability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
 		if (drinksAlcohol)
-			weeklyProbability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
+			probability *= ModelParameters.RISK_FACTOR_ADJUSTMENT;
 
 		double random = RandomHelper.nextDoubleFromTo(0, 1);
 
-		return random <= weeklyProbability;
+		return random <= probability;
 	}
 	
 	private double calculateHoursToDiagnosis() {
@@ -186,9 +177,8 @@ public class Citizen {
 	private void scheduleInfectionEvaluationEvents() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		double hoursToInitialEvaluation = ModelParameters.HOURS_IN_WEEK;
-		double startTime = currentTick + hoursToInitialEvaluation;
-		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, ModelParameters.HOURS_IN_WEEK);
+		double startTime = currentTick + 1;
+		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, 1);
 		evaluateInfectionAction = schedule.schedule(params, this, "evaluateInfection");
 	}
 
