@@ -30,5 +30,19 @@ public class CitizenStyle extends DefaultStyleOGL2D {
 		}
 		return Color.BLUE;
 	}
+	
+	@Override
+	public float getScale(Object object) {
+		Citizen citizen = (Citizen) object;
+		int diseaseStage = citizen.getDiseaseStage();
+		if (diseaseStage == DiseaseStage.EXPOSED ||
+			diseaseStage == DiseaseStage.RECOVERED ||
+			diseaseStage == DiseaseStage.ON_TREATMENT) {
+			return 3.0f;
+		} else if (diseaseStage == DiseaseStage.INFECTED) {
+			return 4.0f;
+		}
+		return 2.0f;
+	}
 
 }
