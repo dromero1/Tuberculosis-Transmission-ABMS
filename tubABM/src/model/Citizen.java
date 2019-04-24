@@ -95,26 +95,26 @@ public class Citizen {
 
 	public void setExposed() {
 		diseaseStage = DiseaseStage.EXPOSED;
-		scheduleInfectionEvaluationEvents();
+		evaluateInfectionAction = scheduleRecurringEvent(1, 1, "evaluateInfection");
 	}
 
 	public void setInfected() {
 		diseaseStage = DiseaseStage.INFECTED;
-		scheduleInfectionEvents();
+		infectAction = scheduleRecurringEvent(1, 1, "infect");
 		unscheduleEvents(evaluateInfectionAction);
 		double hoursToDiagnosis = calculateHoursToDiagnosis();
-		scheduleDiagnosisEvent(hoursToDiagnosis);
+		scheduleOneTimeEvent(hoursToDiagnosis, "diagnosed");
 	}
 	
 	public void diagnosed() {
 		diseaseStage = DiseaseStage.ON_TREATMENT;
 		unscheduleEvents(infectAction);
-		scheduleRecoverEvent(ModelParameters.TREATMENT_DURATION);
+		scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION, "setRecovered");
 	}
 	
 	public void setRecovered() {
 		diseaseStage = DiseaseStage.RECOVERED;
-		scheduleFullRecoveryEvent(ModelParameters.TIME_TO_FULL_RECOVERY);
+		scheduleOneTimeEvent(ModelParameters.TIME_TO_FULL_RECOVERY, "setSusceptible");
 	}
 
 	public void evaluateInfection() {
@@ -173,44 +173,21 @@ public class Citizen {
 		// Get random hours to diagnosis
 		return exp.nextDouble();
 	}
-
-	private void scheduleInfectionEvaluationEvents() {
+	
+	private ISchedulableAction scheduleRecurringEvent(double ticksToEvent, double tickInterval, String methodName, Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		double startTime = currentTick + 1;
-		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, 1);
-		evaluateInfectionAction = schedule.schedule(params, this, "evaluateInfection");
-	}
-
-	private void scheduleInfectionEvents() {
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		ScheduleParameters params = ScheduleParameters.createRepeating(currentTick, 1);
-		infectAction = schedule.schedule(params, this, "infect");
-	}
-
-	private void scheduleDiagnosisEvent(double hoursToDiagnosis) {
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		double startTime = currentTick + hoursToDiagnosis;
-		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
-		schedule.schedule(params, this, "diagnosed");
-	}
-
-	private void scheduleRecoverEvent(double hoursToRecovery) {
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		double startTime = currentTick + hoursToRecovery;
-		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
-		schedule.schedule(params, this, "setRecovered");
+		double startTime = currentTick + ticksToEvent;
+		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, tickInterval);
+		return schedule.schedule(params, this, methodName, methodParams);
 	}
 	
-	private void scheduleFullRecoveryEvent(double hoursToFullRecovery) {
+	private void scheduleOneTimeEvent(double ticksToEvent, String methodName, Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
-		double startTime = currentTick + hoursToFullRecovery;
+		double startTime = currentTick + ticksToEvent;
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
-		schedule.schedule(params, this, "setSusceptible");
+		schedule.schedule(params, this, methodName, methodParams);
 	}
 	
 	private void unscheduleEvents(ISchedulableAction action) {
