@@ -32,7 +32,7 @@ public class Citizen {
 	private int wakeUpTime;
 	private int workTime;
 	private int diseaseStage;
-	private boolean isInmunodepressed; //TODO Fill risk factors from database
+	private boolean isInmunodepressed; // TODO Fill risk factors from database
 	private boolean smokes;
 	private boolean drinksAlcohol;
 	private ISchedulableAction infectAction;
@@ -42,24 +42,17 @@ public class Citizen {
 		this.space = space;
 		this.grid = grid;
 		this.diseaseStage = diseaseStage;
+		
+		// Get random wake up and work time
 		this.wakeUpTime = RandomHelper.nextIntFromTo(ModelParameters.INITIAL_WAKEUP_TIME,
 				ModelParameters.FINAL_WAKEUP_TIME);
 		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORK_TIME, ModelParameters.MAX_WORK_TIME);
-		scheduleRepeatingEvents();
-	}
-
-	public void scheduleRepeatingEvents() {
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		ScheduleParameters params;
-
-		// Schedule wake up event
-		params = ScheduleParameters.createRepeating(wakeUpTime, ModelParameters.HOURS_IN_DAY);
-		schedule.schedule(params, this, "wakeUp");
-
-		// Schedule return home event
-		params = ScheduleParameters.createRepeating(wakeUpTime + workTime, ModelParameters.HOURS_IN_DAY);
-		schedule.schedule(params, this, "returnHome");
-
+		
+		// Schedule daily routine
+		scheduleRecurringEvent(wakeUpTime, ModelParameters.HOURS_IN_DAY, "wakeUp");
+		scheduleRecurringEvent(wakeUpTime + workTime, ModelParameters.HOURS_IN_DAY, "returnHome");
+		
+		// Initialize disease related events
 		if (diseaseStage == DiseaseStage.INFECTED) {
 			setInfected();
 		} else if (diseaseStage == DiseaseStage.EXPOSED) {
@@ -88,7 +81,7 @@ public class Citizen {
 			}
 		}
 	}
-	
+
 	public void setSusceptible() {
 		diseaseStage = DiseaseStage.SUSCEPTIBLE;
 	}
@@ -105,13 +98,13 @@ public class Citizen {
 		double hoursToDiagnosis = calculateHoursToDiagnosis();
 		scheduleOneTimeEvent(hoursToDiagnosis, "diagnosed");
 	}
-	
+
 	public void diagnosed() {
 		diseaseStage = DiseaseStage.ON_TREATMENT;
 		unscheduleEvents(infectAction);
 		scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION, "setRecovered");
 	}
-	
+
 	public void setRecovered() {
 		diseaseStage = DiseaseStage.RECOVERED;
 		scheduleOneTimeEvent(ModelParameters.TIME_TO_FULL_RECOVERY, "setSusceptible");
@@ -147,7 +140,7 @@ public class Citizen {
 
 	private boolean isCitizenGettingInfected() {
 		double probability = ModelParameters.INFECTION_PROGRESSION_RATE;
-		
+
 		// Adjust probability to risk factors
 		if (isInmunodepressed)
 			probability *= ModelParameters.IMMUNODEFICIENCY_FOLD;
@@ -160,28 +153,29 @@ public class Citizen {
 
 		return random <= probability;
 	}
-	
+
 	private double calculateHoursToDiagnosis() {
 		// Get mean diagnosis delay parameter
 		Parameters params = RunEnvironment.getInstance().getParameters();
 		double mDd = params.getDouble("MeanDiagnosisDelay") * ModelParameters.HOURS_IN_DAY;
-		
+
 		// Create exponential function
 		double lambda = 1 / mDd;
 		Exponential exp = RandomHelper.createExponential(lambda);
-		
+
 		// Get random hours to diagnosis
 		return exp.nextDouble();
 	}
-	
-	private ISchedulableAction scheduleRecurringEvent(double ticksToEvent, double tickInterval, String methodName, Object... methodParams) {
+
+	private ISchedulableAction scheduleRecurringEvent(double ticksToEvent, double tickInterval, String methodName,
+			Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		double startTime = currentTick + ticksToEvent;
 		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, tickInterval);
 		return schedule.schedule(params, this, methodName, methodParams);
 	}
-	
+
 	private void scheduleOneTimeEvent(double ticksToEvent, String methodName, Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
@@ -189,7 +183,7 @@ public class Citizen {
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
 		schedule.schedule(params, this, methodName, methodParams);
 	}
-	
+
 	private void unscheduleEvents(ISchedulableAction action) {
 		if (action != null) {
 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
@@ -244,7 +238,7 @@ public class Citizen {
 	public int isRecovered() {
 		return (diseaseStage == DiseaseStage.RECOVERED) ? 1 : 0;
 	}
-	
+
 	public int isOnTreatment() {
 		return (diseaseStage == DiseaseStage.ON_TREATMENT) ? 1 : 0;
 	}
