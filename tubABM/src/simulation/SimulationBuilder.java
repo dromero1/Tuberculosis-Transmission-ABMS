@@ -105,6 +105,9 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 			i++;
 		}
 		
+		// Set termination tick
+		RunEnvironment.getInstance().endAt(87600);
+		
 		return context;
 	}
 
