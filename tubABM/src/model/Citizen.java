@@ -32,7 +32,7 @@ public class Citizen {
 	private int wakeUpTime;
 	private int workTime;
 	private int diseaseStage;
-	private boolean isInmunodepressed; // TODO Fill risk factors from database
+	private boolean isInmunodepressed;
 	private boolean smokes;
 	private boolean drinksAlcohol;
 	private ISchedulableAction infectAction;
@@ -42,16 +42,16 @@ public class Citizen {
 		this.space = space;
 		this.grid = grid;
 		this.diseaseStage = diseaseStage;
-		
+
 		// Get random wake up and work time
 		this.wakeUpTime = RandomHelper.nextIntFromTo(ModelParameters.INITIAL_WAKEUP_TIME,
 				ModelParameters.FINAL_WAKEUP_TIME);
 		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORK_TIME, ModelParameters.MAX_WORK_TIME);
-		
+
 		// Schedule daily routine
 		scheduleRecurringEvent(wakeUpTime, ModelParameters.HOURS_IN_DAY, "wakeUp");
 		scheduleRecurringEvent(wakeUpTime + workTime, ModelParameters.HOURS_IN_DAY, "returnHome");
-		
+
 		// Initialize disease related events
 		if (diseaseStage == DiseaseStage.INFECTED) {
 			setInfected();
@@ -102,7 +102,17 @@ public class Citizen {
 	public void diagnosed() {
 		diseaseStage = DiseaseStage.ON_TREATMENT;
 		unscheduleEvents(infectAction);
-		scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION, "setRecovered");
+
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		double treatmentDropoutRate = params.getDouble("TreatmentDropoutRate");
+		double random = RandomHelper.nextDoubleFromTo(0, 1);
+
+		// Is the patient dropping the treatment
+		if (random <= treatmentDropoutRate) {
+			setInfected();
+		} else {
+			scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION, "setRecovered");
+		}
 	}
 
 	public void setRecovered() {
@@ -241,6 +251,30 @@ public class Citizen {
 
 	public int isOnTreatment() {
 		return (diseaseStage == DiseaseStage.ON_TREATMENT) ? 1 : 0;
+	}
+
+	public boolean isInmunodepressed() {
+		return isInmunodepressed;
+	}
+
+	public void setInmunodepressed() {
+		this.isInmunodepressed = true;
+	}
+
+	public boolean smokes() {
+		return smokes;
+	}
+
+	public void setSmoker() {
+		this.smokes = true;
+	}
+
+	public boolean drinksAlcohol() {
+		return drinksAlcohol;
+	}
+
+	public void setAlcoholDrinker() {
+		this.drinksAlcohol = true;
 	}
 
 }

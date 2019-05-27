@@ -7,9 +7,15 @@
 									
 		/>
 				<parameter name="InfectedCount" displayName="Infected Count" type="int" 
-						defaultValue="10" 
+						defaultValue="2" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="alcoholDrinkersShare" displayName="Alcohol Drinkers Share (%)" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="AverageRoomVolume" displayName="Average Room Volume (m3)" type="double" 
@@ -18,16 +24,34 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+				<parameter name="InmunodepressionShare" displayName="Inmunodepression Share (%)" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 				<parameter name="ExposedCount" displayName="Exposed Count" type="int" 
-						defaultValue="10" 
+						defaultValue="1667" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 				<parameter name="SusceptibleCount" displayName="Susceptible Count" type="int" 
-						defaultValue="1000" 
+						defaultValue="3300" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="SmokersShare" displayName="Smokers Share (%)" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="TreatmentDropoutRate" displayName="Treatment Dropout Rate" type="double" 
+						defaultValue="0.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 				<parameter name="AverageRoomVentilationRate" displayName="Average Room Ventilation Rate (AC/h)" type="double" 

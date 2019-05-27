@@ -20,6 +20,7 @@ import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
@@ -82,6 +83,12 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 			e.printStackTrace();
 		}
 
+		
+		// Risk factors shares
+		double inmunodepressionShare = params.getDouble("InmunodepressionShare");
+		double alcoholDrinkersShare = params.getDouble("AlcoholDrinkersShare");
+		double smokersShare = params.getDouble("SmokersShare");
+		
 		// Set citizens to locations and move them in the projections
 		int i = 1;
 		for (Object obj : context) {
@@ -97,8 +104,22 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 			// Set citizen locations
 			citizen.setHomeplaceLocation(houseHoldX, houseHoldY);
 			citizen.setWorkplaceLocation(workplaceX, workplaceY);
+			
+			// Set risk factors
+			double random = RandomHelper.nextDoubleFromTo(0, 1);
+			if(random <= inmunodepressionShare) {
+				citizen.setInmunodepressed();
+			}
+			random = RandomHelper.nextDoubleFromTo(0, 1);
+			if(random <= alcoholDrinkersShare) {
+				citizen.setAlcoholDrinker();
+			}
+			random = RandomHelper.nextDoubleFromTo(0, 1);
+			if(random <= smokersShare) {
+				citizen.setSmoker();
+			}
 
-			// Move citizen in the projections
+			// Move citizen into the projections
 			grid.moveTo(citizen, houseHoldX, houseHoldY);
 			space.moveTo(citizen, houseHoldX, houseHoldY);
 
@@ -106,7 +127,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		}
 		
 		// Set termination tick
-		RunEnvironment.getInstance().endAt(87600);
+		RunEnvironment.getInstance().endAt(26280);
 		
 		return context;
 	}
