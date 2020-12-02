@@ -38,19 +38,24 @@ public class Citizen {
 	private ISchedulableAction infectAction;
 	private ISchedulableAction evaluateInfectionAction;
 
-	public Citizen(ContinuousSpace<Object> space, Grid<Object> grid, int diseaseStage) {
+	public Citizen(ContinuousSpace<Object> space, Grid<Object> grid,
+			int diseaseStage) {
 		this.space = space;
 		this.grid = grid;
 		this.diseaseStage = diseaseStage;
 
 		// Get random wake up and work time
-		this.wakeUpTime = RandomHelper.nextIntFromTo(ModelParameters.INITIAL_WAKEUP_TIME,
+		this.wakeUpTime = RandomHelper.nextIntFromTo(
+				ModelParameters.INITIAL_WAKEUP_TIME,
 				ModelParameters.FINAL_WAKEUP_TIME);
-		this.workTime = RandomHelper.nextIntFromTo(ModelParameters.MIN_WORK_TIME, ModelParameters.MAX_WORK_TIME);
+		this.workTime = RandomHelper.nextIntFromTo(
+				ModelParameters.MIN_WORK_TIME, ModelParameters.MAX_WORK_TIME);
 
 		// Schedule daily routine
-		scheduleRecurringEvent(wakeUpTime, ModelParameters.HOURS_IN_DAY, "wakeUp");
-		scheduleRecurringEvent(wakeUpTime + workTime, ModelParameters.HOURS_IN_DAY, "returnHome");
+		scheduleRecurringEvent(wakeUpTime, ModelParameters.HOURS_IN_DAY,
+				"wakeUp");
+		scheduleRecurringEvent(wakeUpTime + workTime,
+				ModelParameters.HOURS_IN_DAY, "returnHome");
 
 		// Initialize disease related events
 		if (diseaseStage == DiseaseStage.INFECTED) {
@@ -70,13 +75,15 @@ public class Citizen {
 
 	public void infect() {
 		GridPoint pt = grid.getLocation(this);
-		GridCellNgh<Citizen> nghCreator = new GridCellNgh<Citizen>(grid, pt, Citizen.class, 0, 0);
+		GridCellNgh<Citizen> nghCreator = new GridCellNgh<Citizen>(grid, pt,
+				Citizen.class, 0, 0);
 		List<GridCell<Citizen>> gridCells = nghCreator.getNeighborhood(true);
 
 		for (GridCell<Citizen> cell : gridCells) {
 			int infectedCount = countInfectedPeople(cell.items());
 			for (Citizen citizen : cell.items()) {
-				if (citizen.diseaseStage == DiseaseStage.SUSCEPTIBLE && isCitizenGettingExposed(infectedCount))
+				if (citizen.diseaseStage == DiseaseStage.SUSCEPTIBLE
+						&& isCitizenGettingExposed(infectedCount))
 					citizen.setExposed();
 			}
 		}
@@ -88,7 +95,8 @@ public class Citizen {
 
 	public void setExposed() {
 		diseaseStage = DiseaseStage.EXPOSED;
-		evaluateInfectionAction = scheduleRecurringEvent(1, 1, "evaluateInfection");
+		evaluateInfectionAction = scheduleRecurringEvent(1, 1,
+				"evaluateInfection");
 	}
 
 	public void setInfected() {
@@ -111,13 +119,15 @@ public class Citizen {
 		if (random <= treatmentDropoutRate) {
 			setInfected();
 		} else {
-			scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION, "setRecovered");
+			scheduleOneTimeEvent(ModelParameters.TREATMENT_DURATION,
+					"setRecovered");
 		}
 	}
 
 	public void setRecovered() {
 		diseaseStage = DiseaseStage.RECOVERED;
-		scheduleOneTimeEvent(ModelParameters.TIME_TO_FULL_RECOVERY, "setSusceptible");
+		scheduleOneTimeEvent(ModelParameters.TIME_TO_FULL_RECOVERY,
+				"setSusceptible");
 	}
 
 	public void evaluateInfection() {
@@ -141,7 +151,8 @@ public class Citizen {
 		double aRv = params.getDouble("AverageRoomVolume");
 
 		// Calculate probability of getting exposed
-		double probability = InfectionProbabilityCalculator.calculateProbability(infectedCount, p, aVr, phi, aRv);
+		double probability = InfectionProbabilityCalculator
+				.calculateProbability(infectedCount, p, aVr, phi, aRv);
 
 		double random = RandomHelper.nextDoubleFromTo(0, 1);
 
@@ -167,7 +178,8 @@ public class Citizen {
 	private double calculateHoursToDiagnosis() {
 		// Get mean diagnosis delay parameter
 		Parameters params = RunEnvironment.getInstance().getParameters();
-		double mDd = params.getDouble("MeanDiagnosisDelay") * ModelParameters.HOURS_IN_DAY;
+		double mDd = params.getDouble("MeanDiagnosisDelay")
+				* ModelParameters.HOURS_IN_DAY;
 
 		// Create exponential function
 		double lambda = 1 / mDd;
@@ -177,16 +189,18 @@ public class Citizen {
 		return exp.nextDouble();
 	}
 
-	private ISchedulableAction scheduleRecurringEvent(double ticksToEvent, double tickInterval, String methodName,
-			Object... methodParams) {
+	private ISchedulableAction scheduleRecurringEvent(double ticksToEvent,
+			double tickInterval, String methodName, Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		double startTime = currentTick + ticksToEvent;
-		ScheduleParameters params = ScheduleParameters.createRepeating(startTime, tickInterval);
+		ScheduleParameters params = ScheduleParameters
+				.createRepeating(startTime, tickInterval);
 		return schedule.schedule(params, this, methodName, methodParams);
 	}
 
-	private void scheduleOneTimeEvent(double ticksToEvent, String methodName, Object... methodParams) {
+	private void scheduleOneTimeEvent(double ticksToEvent, String methodName,
+			Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = Math.max(RepastEssentials.GetTickCount(), 0);
 		double startTime = currentTick + ticksToEvent;
@@ -196,7 +210,8 @@ public class Citizen {
 
 	private void unscheduleEvents(ISchedulableAction action) {
 		if (action != null) {
-			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+			ISchedule schedule = RunEnvironment.getInstance()
+					.getCurrentSchedule();
 			schedule.removeAction(action);
 		}
 	}
