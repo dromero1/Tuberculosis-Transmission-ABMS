@@ -1,6 +1,6 @@
 # geo-urban-tuberculosis
 
-*Integrating adaptive learning for crowding-reduction in an agent-based model of an epidemic outbreak*
+*An agent-based model of tuberculosis' propagation in an urban setting*
 
 ## Getting Started
 
