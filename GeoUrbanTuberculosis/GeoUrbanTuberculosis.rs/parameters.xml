@@ -32,7 +32,7 @@
 		defaultValue="0.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="susceptibleCount"
-		displayName="Susceptible Count" type="int" defaultValue="5000"
+		displayName="Susceptible Count" type="int" defaultValue="10000"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="treatmentDropoutRate"
