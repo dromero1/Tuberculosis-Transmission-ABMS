@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+	<parameter name="randomSeed"
+		displayName="Default Random Seed" type="int" defaultValue="__NULL__"
+		isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="averageRoomVentilationRate"
+		displayName="Average Room Ventilation Rate (AC/h)" type="double"
+		defaultValue="3.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="averageRoomVolume"
+		displayName="Average Room Volume (m3)" type="double"
+		defaultValue="75.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="exposedCount" displayName="Exposed Count"
+		type="int" defaultValue="100" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="smokersShare"
+		displayName="Smokers Share (%)" type="double" defaultValue="0.0"
+		isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="meanDiagnosisDelay"
+		displayName="Mean Diagnosis Delay (days)" type="double"
+		defaultValue="45.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="alcoholDrinkersShare"
+		displayName="Alcohol Drinkers Share (%)" type="double"
+		defaultValue="0.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="immunodepressionShare"
+		displayName="Immunodepression Share (%)" type="double"
+		defaultValue="0.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="susceptibleCount"
+		displayName="Susceptible Count" type="int" defaultValue="5000"
+		isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="treatmentDropoutRate"
+		displayName="Treatment Dropout Rate (%)" type="double"
+		defaultValue="0.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+</parameters>
