@@ -7,6 +7,7 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.query.space.grid.GridCellNgh;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.GridPoint;
 import simulation.EventScheduler;
@@ -19,6 +20,11 @@ public class Citizen {
 	 * Particle expelling interval (unit: hours)
 	 */
 	public static final int PARTICLE_EXPELLING_INTERVAL = 1;
+
+	/**
+	 * Displacement per step (unit: meters)
+	 */
+	public static final double DISPLACEMENT_PER_STEP = 1;
 
 	/**
 	 * Household
@@ -95,6 +101,13 @@ public class Citizen {
 		initDisease();
 		scheduleRecurringEvents();
 		goTo(this.household);
+	}
+
+	/**
+	 * Step
+	 */
+	public void step() {
+		randomWalk();
 	}
 
 	/**
@@ -296,6 +309,19 @@ public class Citizen {
 	}
 
 	/**
+	 * Walk randomly
+	 */
+	private void randomWalk() {
+		double x = RandomHelper.nextDoubleFromTo(-DISPLACEMENT_PER_STEP,
+				DISPLACEMENT_PER_STEP);
+		double y = RandomHelper.nextDoubleFromTo(-DISPLACEMENT_PER_STEP,
+				DISPLACEMENT_PER_STEP);
+		NdPoint nextLocation = this.simulationBuilder.space
+				.moveByDisplacement(this, x, y);
+		goTo(nextLocation);
+	}
+
+	/**
 	 * Infect nearby susceptible individuals
 	 */
 	private void infect() {
@@ -332,6 +358,7 @@ public class Citizen {
 				TickConverter.TICKS_PER_DAY, "wakeUp");
 		eventScheduler.scheduleRecurringEvent(this.returningHomeTime, this,
 				TickConverter.TICKS_PER_DAY, "returnHome");
+		eventScheduler.scheduleRecurringEvent(1, this, 1, "step");
 	}
 
 	/**
