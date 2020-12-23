@@ -121,7 +121,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	 */
 	private Grid<Object> createGridProjection(Context<Object> context) {
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
-		return gridFactory.createGrid("grid", context,
+		return gridFactory.createGrid(GRID_PROJECTION_ID, context,
 				new GridBuilderParameters<Object>(new WrapAroundBorders(),
 						new SimpleGridAdder<>(), true, CITY_LENGTH,
 						CITY_WIDTH));

@@ -73,9 +73,8 @@ public class Citizen {
 	/**
 	 * Create a new citizen agent
 	 * 
-	 * @param space       Continuous space
-	 * @param grid        Grid
-	 * @param compartment Compartment
+	 * @param simulationBuilder Simulation builder
+	 * @param compartment       Compartment
 	 */
 	public Citizen(SimulationBuilder simulationBuilder,
 			Compartment compartment) {
