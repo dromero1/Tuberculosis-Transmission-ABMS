@@ -69,7 +69,7 @@ public final class Randomizer {
 	/**
 	 * Mean quanta production (unit: droplets per hour)
 	 */
-	public static final double MEAN_PATIENT_QUANTA_PRODUCTION = 1.25;
+	public static final double MEAN_QUANTA_PRODUCTION = 1.25;
 
 	/**
 	 * Immunodeficiency fold
@@ -173,7 +173,7 @@ public final class Randomizer {
 	public static boolean isGettingExposed(int infectedPeople) {
 		double aVr = ParametersAdapter.getAverageRoomVentilationRate();
 		double aRv = ParametersAdapter.getAverageRoomVolume();
-		double phi = infectedPeople * MEAN_PATIENT_QUANTA_PRODUCTION;
+		double phi = infectedPeople * MEAN_QUANTA_PRODUCTION;
 		double p = (MEAN_PULMONARY_VENTILATION_RATE * phi) / (aRv * aVr);
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
 		return r <= p;
