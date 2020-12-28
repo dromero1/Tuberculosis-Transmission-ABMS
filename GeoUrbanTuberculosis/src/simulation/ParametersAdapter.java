@@ -51,6 +51,11 @@ public final class ParametersAdapter {
 	private static final String TREATMENT_DROPOUT_RATE_PARAM_ID = "treatmentDropoutRate";
 
 	/**
+	 * Exposure probability parameter id
+	 */
+	private static final String EXPOSURE_PROBABILITY_PARAM_ID = "exposureProbability";
+
+	/**
 	 * Private constructor
 	 */
 	private ParametersAdapter() {
@@ -127,6 +132,14 @@ public final class ParametersAdapter {
 	public static double getTreatmentDropoutRate() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
+	}
+
+	/**
+	 * Get exposure probability
+	 */
+	public static double getExposureProbability() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(EXPOSURE_PROBABILITY_PARAM_ID);
 	}
 
 }

@@ -31,6 +31,10 @@
 		displayName="Immunodepression Share (%)" type="double"
 		defaultValue="0.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="exposureProbability"
+		displayName="Exposure probability (%)" type="double"
+		defaultValue="0.1" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="susceptibleCount"
 		displayName="Susceptible Count" type="int" defaultValue="5000"
 		isReadOnly="false"

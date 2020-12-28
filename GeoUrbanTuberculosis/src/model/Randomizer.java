@@ -72,11 +72,6 @@ public final class Randomizer {
 	public static final double MEAN_PATIENT_QUANTA_PRODUCTION = 1.25;
 
 	/**
-	 * Yearly incidence rate (unit: proportion)
-	 */
-	public static final double YEARLY_INCIDENCE_RATE = 0.10;
-
-	/**
 	 * Immunodeficiency fold
 	 */
 	public static final double IMMUNODEFICIENCY_FOLD = 10;
@@ -199,7 +194,7 @@ public final class Randomizer {
 	 * @param citizen Citizen
 	 */
 	public static boolean isGettingInfected(Citizen citizen) {
-		double p = YEARLY_INCIDENCE_RATE;
+		double p = ParametersAdapter.getExposureProbability();
 		if (citizen.isImmunodepressed()) {
 			p *= IMMUNODEFICIENCY_FOLD;
 		}
