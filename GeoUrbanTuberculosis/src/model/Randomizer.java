@@ -194,7 +194,7 @@ public final class Randomizer {
 	 * @param citizen Citizen
 	 */
 	public static boolean isGettingInfected(Citizen citizen) {
-		double p = ParametersAdapter.getExposureProbability();
+		double p = ParametersAdapter.getInfectionProbability();
 		if (citizen.isImmunodepressed()) {
 			p *= IMMUNODEFICIENCY_FOLD;
 		}
