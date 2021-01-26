@@ -6,8 +6,6 @@ import calibration.Calibrator;
 import config.SourcePaths;
 import datasource.Reader;
 import model.Citizen;
-import model.Compartment;
-import model.Heuristics;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -28,13 +26,13 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	/**
 	 * Ticks per simulation run (unit: hours)
 	 */
-	public static final double TICKS_PER_RUN = 8766;
+	public static final double TICKS_PER_RUN = 8760;
 
 	/**
 	 * Maximum number of runs (unit: runs)
 	 */
 	public static final double MAX_RUNS = 100;
-	
+
 	/**
 	 * City's length
 	 */
@@ -66,10 +64,20 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public Grid<Object> grid;
 
 	/**
+	 * Reference to context
+	 */
+	public Context<Object> context;
+
+	/**
 	 * Reference to calibrator
 	 */
 	public Calibrator calibrator;
-	
+
+	/**
+	 * Citizens
+	 */
+	public List<Citizen> citizens;
+
 	/**
 	 * Citizen locations
 	 */
@@ -83,6 +91,8 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	@Override
 	public Context<Object> build(Context<Object> context) {
 		context.setId("GeoUrbanTuberculosis");
+		// Save context
+		this.context = context;
 		// Create continuous space projection
 		this.space = createContinuousSpaceProjection(context);
 		// Create grid projection
@@ -91,22 +101,13 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		this.locations = Reader
 				.readCitizenLocations(SourcePaths.CITIZEN_LOCATIONS_DATABASE);
 		// Add citizens to the simulation
-		List<Citizen> citizens = createCitizens();
-		for (Citizen citizen : citizens) {
-			context.add(citizen);
+		this.citizens = createCitizens();
+		for (Citizen citizen : this.citizens) {
+			this.context.add(citizen);
 		}
-		// Assign households and workplaces
-		for (Citizen citizen : citizens) {
-			Pair<NdPoint, NdPoint> location = Heuristics
-					.getReferenceSpots(this.locations);
-			NdPoint household = location.getFirst();
-			NdPoint workplace = location.getSecond();
-			citizen.setHouseholdLocation(household);
-			citizen.setWorkplaceLocation(workplace);
-		}
-		// Create calibrator
-		this.calibrator = new Calibrator();
-		context.add(this.calibrator);
+		// Add calibrator to the simulation
+		this.calibrator = new Calibrator(this);
+		this.context.add(this.calibrator);
 		return context;
 	}
 
@@ -144,16 +145,16 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	private List<Citizen> createCitizens() {
 		int susceptibleCount = ParametersAdapter.getSusceptibleCount();
 		int exposedCount = ParametersAdapter.getExposedCount();
-		List<Citizen> citizens = new ArrayList<>();
+		List<Citizen> citizensList = new ArrayList<>();
 		for (int i = 0; i < exposedCount; i++) {
-			Citizen citizen = new Citizen(this, Compartment.EXPOSED);
-			citizens.add(citizen);
+			Citizen citizen = new Citizen(this, true);
+			citizensList.add(citizen);
 		}
 		for (int i = 0; i < susceptibleCount; i++) {
-			Citizen citizen = new Citizen(this, Compartment.SUSCEPTIBLE);
-			citizens.add(citizen);
+			Citizen citizen = new Citizen(this, false);
+			citizensList.add(citizen);
 		}
-		return citizens;
+		return citizensList;
 	}
 
 }

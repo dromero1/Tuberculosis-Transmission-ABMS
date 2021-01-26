@@ -10,6 +10,7 @@ import repast.simphony.query.space.grid.GridCellNgh;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.util.collections.Pair;
 import simulation.EventScheduler;
 import simulation.SimulationBuilder;
 import util.TickConverter;
@@ -52,6 +53,11 @@ public class Citizen {
 	private Compartment compartment;
 
 	/**
+	 * Was the citizen initially exposed to the virus?
+	 */
+	private boolean wasInitiallyExposed;
+
+	/**
 	 * Is immunosuppressed? Whether the citizen is immunosuppressed or not.
 	 */
 	private boolean isImmunosuppressed;
@@ -79,26 +85,28 @@ public class Citizen {
 	/**
 	 * Create a new citizen agent
 	 * 
-	 * @param simulationBuilder Simulation builder
-	 * @param compartment       Compartment
+	 * @param simulationBuilder   Simulation builder
+	 * @param wasInitiallyExposed Was the citizen initially exposed?
 	 */
 	public Citizen(SimulationBuilder simulationBuilder,
-			Compartment compartment) {
+			boolean wasInitiallyExposed) {
 		this.simulationBuilder = simulationBuilder;
-		this.compartment = compartment;
-		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
-		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
-		this.isImmunosuppressed = Randomizer.getRandomImmunodeficiency();
-		this.smokes = Randomizer.getRandomSmoker();
-		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker();
+		this.wasInitiallyExposed = wasInitiallyExposed;
+		this.compartment = Compartment.SUSCEPTIBLE;
 	}
 
 	/**
 	 * Initialize
 	 */
-	@ScheduledMethod(start = 0)
+	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN)
 	public void init() {
+		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
+		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
+		this.isImmunosuppressed = Randomizer.getRandomImmunodeficiency();
+		this.smokes = Randomizer.getRandomSmoker();
+		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker();
 		initDisease();
+		assignReferenceLocations();
 		scheduleRecurringEvents();
 		goTo(this.household);
 	}
@@ -228,22 +236,6 @@ public class Citizen {
 	}
 
 	/**
-	 * Get household location
-	 */
-	public NdPoint getHouseholdLocation() {
-		return this.household;
-	}
-
-	/**
-	 * Set household location
-	 * 
-	 * @param householdLocation Household location
-	 */
-	public void setHouseholdLocation(NdPoint householdLocation) {
-		this.household = householdLocation;
-	}
-
-	/**
 	 * Smokes?
 	 */
 	public boolean smokes() {
@@ -344,9 +336,21 @@ public class Citizen {
 	 * Initialize disease
 	 */
 	private void initDisease() {
-		if (this.compartment == Compartment.EXPOSED) {
+		if (this.wasInitiallyExposed) {
 			transitionToExposed(true);
+		} else {
+			transitionToSusceptible();
 		}
+	}
+
+	/**
+	 * Assign reference locations
+	 */
+	private void assignReferenceLocations() {
+		Pair<NdPoint, NdPoint> location = Heuristics
+				.getReferenceSpots(this.simulationBuilder.locations);
+		this.household = location.getFirst();
+		this.workplace = location.getSecond();
 	}
 
 	/**
