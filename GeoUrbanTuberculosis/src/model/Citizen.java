@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
@@ -83,6 +84,11 @@ public class Citizen {
 	private ISchedulableAction expelAction;
 
 	/**
+	 * Scheduled actions
+	 */
+	private List<ISchedulableAction> scheduledActions;
+
+	/**
 	 * Create a new citizen agent
 	 * 
 	 * @param simulationBuilder   Simulation builder
@@ -92,6 +98,7 @@ public class Citizen {
 			boolean wasInitiallyExposed) {
 		this.simulationBuilder = simulationBuilder;
 		this.wasInitiallyExposed = wasInitiallyExposed;
+		this.scheduledActions = new ArrayList<>();
 		this.compartment = Compartment.SUSCEPTIBLE;
 	}
 
@@ -105,6 +112,15 @@ public class Citizen {
 		this.isImmunosuppressed = Randomizer.getRandomImmunodeficiency();
 		this.smokes = Randomizer.getRandomSmoker();
 		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker();
+		unscheduleProgrammedEvents();
+	}
+
+	/**
+	 * Start
+	 */
+	@ScheduledMethod(start = 1, interval = SimulationBuilder.TICKS_PER_RUN
+			+ SimulationBuilder.TICKS_BETWEEN_RUNS)
+	public void start() {
 		initDisease();
 		assignReferenceLocations();
 		scheduleRecurringEvents();
@@ -157,8 +173,9 @@ public class Citizen {
 			double incubationPeriod = Randomizer.getRandomIncubationPeriod();
 			double ticks = TickConverter.daysToTicks(incubationPeriod);
 			EventScheduler eventScheduler = EventScheduler.getInstance();
-			eventScheduler.scheduleOneTimeEvent(ticks, this,
-					"transitionToInfected");
+			ISchedulableAction action = eventScheduler
+					.scheduleOneTimeEvent(ticks, this, "transitionToInfected");
+			this.scheduledActions.add(action);
 		} else {
 			transitionToSusceptible();
 		}
@@ -173,11 +190,13 @@ public class Citizen {
 		EventScheduler eventScheduler = EventScheduler.getInstance();
 		this.expelAction = eventScheduler.scheduleRecurringEvent(1, this,
 				PARTICLE_EXPELLING_INTERVAL, "expelParticles");
+		this.scheduledActions.add(this.expelAction);
 		// Schedule diagnosis
 		double daysToDiagnosis = Randomizer.getRandomDaysToDiagnosis();
 		double ticks = TickConverter.daysToTicks(daysToDiagnosis);
-		eventScheduler.scheduleOneTimeEvent(ticks, this,
-				"transitionToOnTreament");
+		ISchedulableAction action = eventScheduler.scheduleOneTimeEvent(ticks,
+				this, "transitionToOnTreament");
+		this.scheduledActions.add(action);
 	}
 
 	/**
@@ -192,11 +211,13 @@ public class Citizen {
 			double treatmentDuration = Randomizer.getRandomTreatmentDuration();
 			double ticks = TickConverter.daysToTicks(treatmentDuration);
 			EventScheduler eventScheduler = EventScheduler.getInstance();
-			eventScheduler.scheduleOneTimeEvent(ticks, this,
-					"transitionToImmune");
+			ISchedulableAction action = eventScheduler
+					.scheduleOneTimeEvent(ticks, this, "transitionToImmune");
+			this.scheduledActions.add(action);
 		}
 		// Unschedule particle expelling
 		unscheduleAction(this.expelAction);
+		this.scheduledActions.remove(this.expelAction);
 	}
 
 	/**
@@ -208,8 +229,9 @@ public class Citizen {
 		double daysToFullRecovery = Randomizer.getRandomDaysToFullRecovery();
 		double ticks = TickConverter.daysToTicks(daysToFullRecovery);
 		EventScheduler eventScheduler = EventScheduler.getInstance();
-		eventScheduler.scheduleOneTimeEvent(ticks, this,
-				"transitionToSusceptible");
+		ISchedulableAction action = eventScheduler.scheduleOneTimeEvent(ticks,
+				this, "transitionToSusceptible");
+		this.scheduledActions.add(action);
 	}
 
 	/**
@@ -333,6 +355,17 @@ public class Citizen {
 	}
 
 	/**
+	 * Unschedule programmed events
+	 */
+	private void unscheduleProgrammedEvents() {
+		for (int i = 0; i < this.scheduledActions.size(); i++) {
+			ISchedulableAction action = this.scheduledActions.get(i);
+			unscheduleAction(action);
+		}
+		this.scheduledActions = new ArrayList<>();
+	}
+
+	/**
 	 * Initialize disease
 	 */
 	private void initDisease() {
@@ -358,11 +391,16 @@ public class Citizen {
 	 */
 	private void scheduleRecurringEvents() {
 		EventScheduler eventScheduler = EventScheduler.getInstance();
-		eventScheduler.scheduleRecurringEvent(this.wakeUpTime, this,
-				TickConverter.TICKS_PER_DAY, "wakeUp");
-		eventScheduler.scheduleRecurringEvent(this.returningHomeTime, this,
-				TickConverter.TICKS_PER_DAY, "returnHome");
-		eventScheduler.scheduleRecurringEvent(1, this, 1, "step");
+		ISchedulableAction wakeUpAction = eventScheduler.scheduleRecurringEvent(
+				this.wakeUpTime, this, TickConverter.TICKS_PER_DAY, "wakeUp");
+		ISchedulableAction returnHomeAction = eventScheduler
+				.scheduleRecurringEvent(this.returningHomeTime, this,
+						TickConverter.TICKS_PER_DAY, "returnHome");
+		ISchedulableAction stepAction = eventScheduler
+				.scheduleRecurringEvent(this.wakeUpTime, this, 1, "step");
+		this.scheduledActions.add(wakeUpAction);
+		this.scheduledActions.add(returnHomeAction);
+		this.scheduledActions.add(stepAction);
 	}
 
 	/**

@@ -37,13 +37,13 @@ public class EventScheduler {
 	 * @param methodName   Method's name
 	 * @param methodParams Method's parameters
 	 */
-	public void scheduleOneTimeEvent(double ticksToEvent, Object obj,
-			String methodName, Object... methodParams) {
+	public ISchedulableAction scheduleOneTimeEvent(double ticksToEvent,
+			Object obj, String methodName, Object... methodParams) {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTick = RepastEssentials.GetTickCount();
 		double startTime = currentTick + ticksToEvent;
 		ScheduleParameters params = ScheduleParameters.createOneTime(startTime);
-		schedule.schedule(params, obj, methodName, methodParams);
+		return schedule.schedule(params, obj, methodName, methodParams);
 	}
 
 	/**

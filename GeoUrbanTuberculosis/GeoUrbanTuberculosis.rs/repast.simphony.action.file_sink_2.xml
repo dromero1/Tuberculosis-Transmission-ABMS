@@ -1,0 +1,16 @@
+<repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.8.0">
+  <name>CompartmentsFileSink</name>
+  <dataSet>AggregateEpidemicTimeSeries</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>susceptible</string>
+    <string>exposed</string>
+    <string>infected</string>
+    <string>immune</string>
+    <string>ontreatment</string>
+    <string>tick</string>
+  </sourceIds>
+  <fileName>output/Run.csv</fileName>
+  <addTimeStamp>false</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

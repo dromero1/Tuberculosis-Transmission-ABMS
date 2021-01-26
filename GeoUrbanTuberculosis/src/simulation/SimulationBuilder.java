@@ -29,6 +29,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public static final double TICKS_PER_RUN = 8760;
 
 	/**
+	 * Ticks between simulation runs (unit: hours)
+	 */
+	public static final double TICKS_BETWEEN_RUNS = 100;
+	
+	/**
 	 * Maximum number of runs (unit: runs)
 	 */
 	public static final double MAX_RUNS = 100;
