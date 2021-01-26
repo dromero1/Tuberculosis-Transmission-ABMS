@@ -92,7 +92,8 @@ public class Citizen {
 	 * Create a new citizen agent
 	 * 
 	 * @param simulationBuilder   Simulation builder
-	 * @param wasInitiallyExposed Was the citizen initially exposed?
+	 * @param wasInitiallyExposed Was the citizen initially exposed to the
+	 *                            disease?
 	 */
 	public Citizen(SimulationBuilder simulationBuilder,
 			boolean wasInitiallyExposed) {
