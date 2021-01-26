@@ -243,22 +243,6 @@ public class Citizen {
 	}
 
 	/**
-	 * Get workplace location
-	 */
-	public NdPoint getWorkplaceLocation() {
-		return this.workplace;
-	}
-
-	/**
-	 * Set workplace location
-	 * 
-	 * @param workplaceLocation Workplace location
-	 */
-	public void setWorkplaceLocation(NdPoint workplaceLocation) {
-		this.workplace = workplaceLocation;
-	}
-
-	/**
 	 * Smokes?
 	 */
 	public boolean smokes() {
