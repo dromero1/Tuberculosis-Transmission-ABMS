@@ -24,7 +24,7 @@ public class Citizen {
 	public static final int PARTICLE_EXPELLING_INTERVAL = 1;
 
 	/**
-	 * Displacement per step (unit: meters)
+	 * Displacement per step (unit: grid step)
 	 */
 	public static final double DISPLACEMENT_PER_STEP = 1;
 
