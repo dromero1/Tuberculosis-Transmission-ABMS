@@ -64,24 +64,19 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public Grid<Object> grid;
 
 	/**
-	 * Reference to context
+	 * Citizens' locations
 	 */
-	public Context<Object> context;
+	public List<Pair<NdPoint, NdPoint>> locations;
 
 	/**
 	 * Reference to calibrator
 	 */
-	public Calibrator calibrator;
+	private Calibrator calibrator;
 
 	/**
 	 * Citizens
 	 */
-	public List<Citizen> citizens;
-
-	/**
-	 * Citizens' locations
-	 */
-	public List<Pair<NdPoint, NdPoint>> locations;
+	private List<Citizen> citizens;
 
 	/**
 	 * Build simulation
@@ -91,8 +86,6 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	@Override
 	public Context<Object> build(Context<Object> context) {
 		context.setId("GeoUrbanTuberculosis");
-		// Save context
-		this.context = context;
 		// Create continuous space projection
 		this.space = createContinuousSpaceProjection(context);
 		// Create grid projection
@@ -103,11 +96,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		// Add citizens to the simulation
 		this.citizens = createCitizens();
 		for (Citizen citizen : this.citizens) {
-			this.context.add(citizen);
+			context.add(citizen);
 		}
 		// Add calibrator to the simulation
 		this.calibrator = new Calibrator();
-		this.context.add(this.calibrator);
+		context.add(this.calibrator);
 		return context;
 	}
 
