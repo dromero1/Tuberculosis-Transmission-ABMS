@@ -47,7 +47,7 @@ public class Calibrator {
 		if (this.run > 0) {
 			ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
 			double aVr = parametersAdapter.getAverageRoomVentilationRate();
-			aVr = aVr * 0.10;
+			aVr = aVr * 0.1;
 			parametersAdapter.setAverageRoomVentilationRate(aVr);
 		}
 		this.run++;
