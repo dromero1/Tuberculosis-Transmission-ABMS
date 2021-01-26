@@ -106,7 +106,7 @@ public class Citizen {
 	/**
 	 * Initialize
 	 */
-	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN)
+	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN, priority = 1)
 	public void init() {
 		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
 		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
@@ -323,7 +323,8 @@ public class Citizen {
 			int infectedCount = countInfectedPeople(cell.items());
 			for (Citizen citizen : cell.items()) {
 				if (citizen.compartment == Compartment.SUSCEPTIBLE
-						&& Randomizer.isGettingExposed(infectedCount)) {
+						&& Randomizer.isGettingExposed(infectedCount,
+								this.simulationBuilder.parametersAdapter)) {
 					citizen.transitionToExposed(false);
 				}
 			}
