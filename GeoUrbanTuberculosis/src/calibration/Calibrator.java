@@ -6,19 +6,13 @@ import simulation.SimulationBuilder;
 public class Calibrator {
 
 	/**
-	 * Reference to simulation builder
-	 */
-	private SimulationBuilder simulationBuilder;
-
-	/**
 	 * Create a new calibrator
-	 * 
-	 * @param simulationBuilder Simulation builder
 	 */
-	public Calibrator(SimulationBuilder simulationBuilder) {
-		this.simulationBuilder = simulationBuilder;
-		RunEnvironment.getInstance().endAt(20 * SimulationBuilder.TICKS_PER_RUN
-				+ 20 * SimulationBuilder.TICKS_BETWEEN_RUNS);
+	public Calibrator() {
+		int runs = 20;
+		double endTime = runs * (SimulationBuilder.TICKS_PER_RUN
+				+ SimulationBuilder.TICKS_BETWEEN_RUNS);
+		RunEnvironment.getInstance().endAt(endTime);
 	}
 
 }

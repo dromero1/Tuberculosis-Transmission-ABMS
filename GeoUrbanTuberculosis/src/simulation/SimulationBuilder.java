@@ -111,7 +111,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 			this.context.add(citizen);
 		}
 		// Add calibrator to the simulation
-		this.calibrator = new Calibrator(this);
+		this.calibrator = new Calibrator();
 		this.context.add(this.calibrator);
 		return context;
 	}
