@@ -3,9 +3,9 @@ package config;
 public final class SourcePaths {
 
 	/**
-	 * Citizen's locations database
+	 * Citizens' locations database
 	 */
-	public static final String CITIZEN_LOCATIONS_DATABASE = "./data/citizen-locations.csv";
+	public static final String CITIZENS_LOCATIONS_DATABASE = "./data/citizens-locations.csv";
 
 	/**
 	 * Private constructor

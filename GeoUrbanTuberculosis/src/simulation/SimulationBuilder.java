@@ -84,7 +84,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public List<Citizen> citizens;
 
 	/**
-	 * Citizen locations
+	 * Citizens' locations
 	 */
 	public List<Pair<NdPoint, NdPoint>> locations;
 
@@ -102,9 +102,9 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		this.space = createContinuousSpaceProjection(context);
 		// Create grid projection
 		this.grid = createGridProjection(context);
-		// Read citizen locations
+		// Read citizens' locations
 		this.locations = Reader
-				.readCitizenLocations(SourcePaths.CITIZEN_LOCATIONS_DATABASE);
+				.readCitizensLocations(SourcePaths.CITIZENS_LOCATIONS_DATABASE);
 		// Add citizens to the simulation
 		this.citizens = createCitizens();
 		for (Citizen citizen : this.citizens) {

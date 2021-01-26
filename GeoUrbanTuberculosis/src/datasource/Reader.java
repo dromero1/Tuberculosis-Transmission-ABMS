@@ -24,11 +24,11 @@ public final class Reader {
 	}
 
 	/**
-	 * Read citizen's locations
+	 * Read citizens' locations
 	 * 
 	 * @param filename File name
 	 */
-	public static List<Pair<NdPoint, NdPoint>> readCitizenLocations(
+	public static List<Pair<NdPoint, NdPoint>> readCitizensLocations(
 			String filename) {
 		List<Pair<NdPoint, NdPoint>> locations = new ArrayList<>();
 		File file = new File(filename);
@@ -46,16 +46,16 @@ public final class Reader {
 					int workplaceY = 0;
 					for (int i = 0; i < elements.length; i++) {
 						switch (i) {
-						case SourceFeatures.CITIZEN_LOCATIONS_HOUSEHOLD_X_COLUMN:
+						case SourceFeatures.CITIZENS_LOCATIONS_HOUSEHOLD_X_COLUMN:
 							householdX = Integer.parseInt(elements[i]);
 							break;
-						case SourceFeatures.CITIZEN_LOCATIONS_HOUSEHOLD_Y_COLUMN:
+						case SourceFeatures.CITIZENS_LOCATIONS_HOUSEHOLD_Y_COLUMN:
 							householdY = Integer.parseInt(elements[i]);
 							break;
-						case SourceFeatures.CITIZEN_LOCATIONS_WORKPLACE_X_COLUMN:
+						case SourceFeatures.CITIZENS_LOCATIONS_WORKPLACE_X_COLUMN:
 							workplaceX = Integer.parseInt(elements[i]);
 							break;
-						case SourceFeatures.CITIZEN_LOCATIONS_WORKPLACE_Y_COLUMN:
+						case SourceFeatures.CITIZENS_LOCATIONS_WORKPLACE_Y_COLUMN:
 							workplaceY = Integer.parseInt(elements[i]);
 							break;
 						default:
