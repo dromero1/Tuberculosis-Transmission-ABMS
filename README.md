@@ -34,7 +34,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Built with
 
-* [Repast Simphony 2.7](https://repast.github.io/) - An agent-based modeling and simulation platform
+* [Repast Simphony 2.8](https://repast.github.io/) - An agent-based modeling and simulation platform
 
 ## Authors
 
