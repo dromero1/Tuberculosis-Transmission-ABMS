@@ -257,6 +257,13 @@ public class Citizen {
 	}
 
 	/**
+	 * Is immunodepressed?
+	 */
+	public boolean isImmunodepressed() {
+		return this.isImmunosuppressed;
+	}
+
+	/**
 	 * Is susceptible?
 	 */
 	public int isSusceptible() {
@@ -289,13 +296,6 @@ public class Citizen {
 	 */
 	public int isOnTreatment() {
 		return (this.compartment == Compartment.ON_TREATMENT) ? 1 : 0;
-	}
-
-	/**
-	 * Is immunodepressed?
-	 */
-	public boolean isImmunodepressed() {
-		return this.isImmunosuppressed;
 	}
 
 	/**
