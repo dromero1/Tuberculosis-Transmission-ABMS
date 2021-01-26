@@ -32,7 +32,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	 * Ticks between simulation runs (unit: hours)
 	 */
 	public static final double TICKS_BETWEEN_RUNS = 100;
-	
+
 	/**
 	 * City's length
 	 */
