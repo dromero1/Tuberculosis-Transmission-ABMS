@@ -34,11 +34,6 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public static final double TICKS_BETWEEN_RUNS = 100;
 	
 	/**
-	 * Maximum number of runs (unit: runs)
-	 */
-	public static final double MAX_RUNS = 100;
-
-	/**
 	 * City's length
 	 */
 	public static final int CITY_LENGTH = 500;
