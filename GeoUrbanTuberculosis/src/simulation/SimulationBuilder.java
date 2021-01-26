@@ -74,11 +74,6 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	private Calibrator calibrator;
 
 	/**
-	 * Citizens
-	 */
-	private List<Citizen> citizens;
-
-	/**
 	 * Build simulation
 	 * 
 	 * @param context Simulation context
@@ -94,8 +89,8 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		this.locations = Reader
 				.readCitizensLocations(SourcePaths.CITIZENS_LOCATIONS_DATABASE);
 		// Add citizens to the simulation
-		this.citizens = createCitizens();
-		for (Citizen citizen : this.citizens) {
+		List<Citizen> citizens = createCitizens();
+		for (Citizen citizen : citizens) {
 			context.add(citizen);
 		}
 		// Add calibrator to the simulation
