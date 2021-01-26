@@ -17,8 +17,8 @@ public class Calibrator {
 	 */
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
-		RunEnvironment.getInstance().endAt(10 * SimulationBuilder.TICKS_PER_RUN
-				+ 9 * SimulationBuilder.TICKS_BETWEEN_RUNS);
+		RunEnvironment.getInstance().endAt(20 * SimulationBuilder.TICKS_PER_RUN
+				+ 20 * SimulationBuilder.TICKS_BETWEEN_RUNS);
 	}
 
 }
