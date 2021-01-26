@@ -2,6 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 import java.util.List;
+import calibration.Calibrator;
 import config.SourcePaths;
 import datasource.Reader;
 import model.Citizen;
@@ -13,7 +14,6 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
-import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
@@ -26,10 +26,15 @@ import repast.simphony.util.collections.Pair;
 public class SimulationBuilder implements ContextBuilder<Object> {
 
 	/**
-	 * End tick (unit: hours)
+	 * Ticks per simulation run (unit: hours)
 	 */
-	public static final double END_TICK = 8766;
+	public static final double TICKS_PER_RUN = 8766;
 
+	/**
+	 * Maximum number of runs (unit: runs)
+	 */
+	public static final double MAX_RUNS = 100;
+	
 	/**
 	 * City's length
 	 */
@@ -60,6 +65,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	 */
 	public Grid<Object> grid;
 
+	/**
+	 * Reference to calibrator
+	 */
+	public Calibrator calibrator;
+	
 	/**
 	 * Citizen locations
 	 */
@@ -94,8 +104,9 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 			citizen.setHouseholdLocation(household);
 			citizen.setWorkplaceLocation(workplace);
 		}
-		// Set end tick
-		RunEnvironment.getInstance().endAt(END_TICK);
+		// Create calibrator
+		this.calibrator = new Calibrator();
+		context.add(this.calibrator);
 		return context;
 	}
 
