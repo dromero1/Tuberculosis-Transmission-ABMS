@@ -64,7 +64,7 @@ public class ParametersAdapter {
 	/**
 	 * Initialize
 	 */
-	@ScheduledMethod(start = 0)
+	@ScheduledMethod(start = 0, priority = 4)
 	public void init() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		this.averageRoomVentilationRate = simParams

@@ -106,7 +106,7 @@ public class Citizen {
 	/**
 	 * Initialize
 	 */
-	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN)
+	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN, priority = 1)
 	public void init() {
 		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
 		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
