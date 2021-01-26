@@ -1,9 +1,10 @@
 package simulation;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 
-public final class ParametersAdapter {
+public class ParametersAdapter {
 
 	/**
 	 * Exposed count parameter id
@@ -56,10 +57,18 @@ public final class ParametersAdapter {
 	private static final String INFECTION_PROBABILITY_PARAM_ID = "infectionProbability";
 
 	/**
-	 * Private constructor
+	 * Average room ventilation rate
 	 */
-	private ParametersAdapter() {
-		throw new UnsupportedOperationException("Utility class");
+	private double averageRoomVentilationRate;
+
+	/**
+	 * Initialize
+	 */
+	@ScheduledMethod(start = 0)
+	public void init() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		this.averageRoomVentilationRate = simParams
+				.getDouble(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
 	}
 
 	/**
@@ -113,9 +122,18 @@ public final class ParametersAdapter {
 	/**
 	 * Get average room ventilation rate
 	 */
-	public static double getAverageRoomVentilationRate() {
-		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
+	public double getAverageRoomVentilationRate() {
+		return this.averageRoomVentilationRate;
+	}
+
+	/**
+	 * Set average room ventilation rate
+	 * 
+	 * @param averageRoomVentilationRate Average room ventilation rate
+	 */
+	public void setAverageRoomVentilationRate(
+			double averageRoomVentilationRate) {
+		this.averageRoomVentilationRate = averageRoomVentilationRate;
 	}
 
 	/**

@@ -323,7 +323,8 @@ public class Citizen {
 			int infectedCount = countInfectedPeople(cell.items());
 			for (Citizen citizen : cell.items()) {
 				if (citizen.compartment == Compartment.SUSCEPTIBLE
-						&& Randomizer.isGettingExposed(infectedCount)) {
+						&& Randomizer.isGettingExposed(infectedCount,
+								this.simulationBuilder.parametersAdapter)) {
 					citizen.transitionToExposed(false);
 				}
 			}

@@ -69,6 +69,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public List<Pair<NdPoint, NdPoint>> locations;
 
 	/**
+	 * Reference to parameters adapter
+	 */
+	public ParametersAdapter parametersAdapter;
+	
+	/**
 	 * Reference to calibrator
 	 */
 	private Calibrator calibrator;
@@ -93,6 +98,9 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		for (Citizen citizen : citizens) {
 			context.add(citizen);
 		}
+		// Add parameters adapter to the simulation
+		this.parametersAdapter = new ParametersAdapter();
+		context.add(this.parametersAdapter);
 		// Add calibrator to the simulation
 		this.calibrator = new Calibrator();
 		context.add(this.calibrator);

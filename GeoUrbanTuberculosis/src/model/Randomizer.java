@@ -170,8 +170,9 @@ public final class Randomizer {
 	 * 
 	 * @param infectedPeople Infected people around
 	 */
-	public static boolean isGettingExposed(int infectedPeople) {
-		double aVr = ParametersAdapter.getAverageRoomVentilationRate();
+	public static boolean isGettingExposed(int infectedPeople,
+			ParametersAdapter parametersAdapter) {
+		double aVr = parametersAdapter.getAverageRoomVentilationRate();
 		double aRv = ParametersAdapter.getAverageRoomVolume();
 		double phi = infectedPeople * MEAN_QUANTA_PRODUCTION;
 		double p = (MEAN_PULMONARY_VENTILATION_RATE * phi) / (aRv * aVr);
