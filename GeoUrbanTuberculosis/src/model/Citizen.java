@@ -292,15 +292,6 @@ public class Citizen {
 	}
 
 	/**
-	 * Is an active case?
-	 */
-	public int isActiveCase() {
-		return (this.compartment == Compartment.EXPOSED
-				|| this.compartment == Compartment.INFECTED
-				|| this.compartment == Compartment.ON_TREATMENT) ? 1 : 0;
-	}
-
-	/**
 	 * Is immunodepressed?
 	 */
 	public boolean isImmunodepressed() {
