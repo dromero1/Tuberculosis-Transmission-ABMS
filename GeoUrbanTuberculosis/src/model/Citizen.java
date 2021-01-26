@@ -54,7 +54,7 @@ public class Citizen {
 	private Compartment compartment;
 
 	/**
-	 * Was the citizen initially exposed to the virus?
+	 * Was the citizen initially exposed to the disease?
 	 */
 	private boolean wasInitiallyExposed;
 
