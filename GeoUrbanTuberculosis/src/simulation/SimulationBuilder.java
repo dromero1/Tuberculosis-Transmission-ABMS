@@ -133,16 +133,16 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	private List<Citizen> createCitizens() {
 		int susceptibleCount = ParametersAdapter.getSusceptibleCount();
 		int exposedCount = ParametersAdapter.getExposedCount();
-		List<Citizen> citizensList = new ArrayList<>();
+		List<Citizen> citizens = new ArrayList<>();
 		for (int i = 0; i < exposedCount; i++) {
 			Citizen citizen = new Citizen(this, true);
-			citizensList.add(citizen);
+			citizens.add(citizen);
 		}
 		for (int i = 0; i < susceptibleCount; i++) {
 			Citizen citizen = new Citizen(this, false);
-			citizensList.add(citizen);
+			citizens.add(citizen);
 		}
-		return citizensList;
+		return citizens;
 	}
 
 }
