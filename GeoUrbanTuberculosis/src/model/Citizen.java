@@ -205,6 +205,9 @@ public class Citizen {
 	 */
 	public void transitionToOnTreament() {
 		this.compartment = Compartment.ON_TREATMENT;
+		// Unschedule particle expelling
+		unscheduleAction(this.expelAction);
+		this.scheduledActions.remove(this.expelAction);
 		// Schedule treatment dropout or recovery
 		if (Randomizer.isDroppingOutTreatment()) {
 			transitionToInfected();
@@ -216,9 +219,6 @@ public class Citizen {
 					.scheduleOneTimeEvent(ticks, this, "transitionToImmune");
 			this.scheduledActions.add(action);
 		}
-		// Unschedule particle expelling
-		unscheduleAction(this.expelAction);
-		this.scheduledActions.remove(this.expelAction);
 	}
 
 	/**
