@@ -2,6 +2,7 @@ package calibration;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.random.RandomHelper;
 import simulation.ParametersAdapter;
 import simulation.SimulationBuilder;
 
@@ -49,6 +50,7 @@ public class Calibrator {
 			double aVr = parametersAdapter.getAverageRoomVentilationRate();
 			aVr = aVr * 0.1;
 			parametersAdapter.setAverageRoomVentilationRate(aVr);
+			RandomHelper.init();
 		}
 		this.run++;
 	}
