@@ -25,7 +25,6 @@ public class Calibrator {
 	 */
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
-		this.run = 0;
 	}
 
 	/**
