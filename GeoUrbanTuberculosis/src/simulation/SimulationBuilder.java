@@ -34,6 +34,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public static final double TICKS_BETWEEN_RUNS = 100;
 
 	/**
+	 * Simulations per calibration step
+	 */
+	public static final double SIMULATIONS_PER_CALIBRATION_STEP = 10;
+
+	/**
 	 * City's length
 	 */
 	public static final int CITY_LENGTH = 500;

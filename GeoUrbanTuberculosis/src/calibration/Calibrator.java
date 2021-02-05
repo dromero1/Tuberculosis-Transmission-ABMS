@@ -14,9 +14,9 @@ public class Calibrator {
 	private SimulationBuilder simulationBuilder;
 
 	/**
-	 * Run
+	 * Simulation runs
 	 */
-	private int run;
+	private int simulationRuns;
 
 	/**
 	 * Create a new calibrator
@@ -32,26 +32,36 @@ public class Calibrator {
 	 */
 	@ScheduledMethod(start = 0, priority = 3)
 	public void init() {
-		int runs = 10;
-		double endTime = runs * (SimulationBuilder.TICKS_PER_RUN
-				+ SimulationBuilder.TICKS_BETWEEN_RUNS);
+		int calibrationSteps = 5;
+		double endTime = calibrationSteps
+				* SimulationBuilder.SIMULATIONS_PER_CALIBRATION_STEP
+				* (SimulationBuilder.TICKS_PER_RUN
+						+ SimulationBuilder.TICKS_BETWEEN_RUNS);
 		RunEnvironment.getInstance().endAt(endTime);
+	}
+
+	/**
+	 * Handle the 'onNewSimulationRun' event
+	 */
+	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN
+			+ SimulationBuilder.TICKS_BETWEEN_RUNS, priority = 2)
+	public void onNewSimulationRun() {
+		RandomHelper.init();
+		if (this.simulationRuns >= SimulationBuilder.SIMULATIONS_PER_CALIBRATION_STEP) {
+			updateParameters();
+			this.simulationRuns = 0;
+		}
+		this.simulationRuns++;
 	}
 
 	/**
 	 * Update parameters
 	 */
-	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN
-			+ SimulationBuilder.TICKS_BETWEEN_RUNS, priority = 2)
 	public void updateParameters() {
-		if (this.run > 0) {
-			ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
-			double aVr = parametersAdapter.getAverageRoomVentilationRate();
-			aVr = aVr * 0.1;
-			parametersAdapter.setAverageRoomVentilationRate(aVr);
-			RandomHelper.init();
-		}
-		this.run++;
+		ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
+		double aVr = parametersAdapter.getAverageRoomVentilationRate();
+		aVr = aVr * 0.1;
+		parametersAdapter.setAverageRoomVentilationRate(aVr);
 	}
 
 }

@@ -24,6 +24,11 @@ public class Citizen {
 	public static final int PARTICLE_EXPELLING_INTERVAL = 1;
 
 	/**
+	 * Ticks between steps (unit: hours)
+	 */
+	public static final int TICKS_BETWEEN_STEPS = 1;
+
+	/**
 	 * Displacement per step (unit: grid step)
 	 */
 	public static final double DISPLACEMENT_PER_STEP = 1;
@@ -373,8 +378,8 @@ public class Citizen {
 		ISchedulableAction returnHomeAction = eventScheduler
 				.scheduleRecurringEvent(this.returningHomeTime, this,
 						TickConverter.TICKS_PER_DAY, "returnHome");
-		ISchedulableAction stepAction = eventScheduler
-				.scheduleRecurringEvent(this.wakeUpTime, this, 1, "step");
+		ISchedulableAction stepAction = eventScheduler.scheduleRecurringEvent(
+				this.wakeUpTime, this, TICKS_BETWEEN_STEPS, "step");
 		this.scheduledActions.add(wakeUpAction);
 		this.scheduledActions.add(returnHomeAction);
 		this.scheduledActions.add(stepAction);
