@@ -23,7 +23,7 @@ public class Calibrator {
 	/**
 	 * Simulations per calibration step
 	 */
-	public static final double SIMULATIONS_PER_CALIBRATION_STEP = 10;
+	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
 
 	/**
 	 * Reference to simulation builder
@@ -31,9 +31,9 @@ public class Calibrator {
 	private SimulationBuilder simulationBuilder;
 
 	/**
-	 * Simulation runs
+	 * Current simulation run
 	 */
-	private int simulationRuns;
+	private int simulationRun;
 
 	/**
 	 * Incidence rates
@@ -67,15 +67,18 @@ public class Calibrator {
 	@ScheduledMethod(start = 0, interval = TICKS_PER_RUN
 			+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
-		if (this.simulationRuns >= SIMULATIONS_PER_CALIBRATION_STEP) {
+		if (this.simulationRun > 0) {
+			measureIncidenceRate();
+			RandomHelper.init();
+			this.simulationBuilder.outputManager.resetOutputs();
+		}
+		if (this.simulationRun > SIMULATIONS_PER_CALIBRATION_STEP) {
 			System.out.println(this.incidenceRates);
 			updateParameters();
-			this.simulationRuns = 0;
+			resetMetrics();
+			this.simulationRun = 0;
 		}
-		measureIncidenceRate();
-		RandomHelper.init();
-		this.simulationBuilder.outputManager.resetOutputs();
-		this.simulationRuns++;
+		this.simulationRun++;
 	}
 
 	/**
@@ -85,8 +88,15 @@ public class Calibrator {
 		int newCases = this.simulationBuilder.outputManager.getNewCases();
 		int initialPopulation = this.simulationBuilder.parametersAdapter
 				.getSusceptibleCount();
-		double incidenceRate = newCases / initialPopulation;
+		double incidenceRate = (newCases * 1.0) / initialPopulation;
 		this.incidenceRates.add(incidenceRate);
+	}
+
+	/**
+	 * Reset metrics
+	 */
+	public void resetMetrics() {
+		this.incidenceRates = new ArrayList<>();
 	}
 
 	/**
