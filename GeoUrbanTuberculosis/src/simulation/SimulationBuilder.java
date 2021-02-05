@@ -24,21 +24,6 @@ import repast.simphony.util.collections.Pair;
 public class SimulationBuilder implements ContextBuilder<Object> {
 
 	/**
-	 * Ticks per simulation run (unit: hours)
-	 */
-	public static final double TICKS_PER_RUN = 8760;
-
-	/**
-	 * Ticks between simulation runs (unit: hours)
-	 */
-	public static final double TICKS_BETWEEN_RUNS = 100;
-
-	/**
-	 * Simulations per calibration step
-	 */
-	public static final double SIMULATIONS_PER_CALIBRATION_STEP = 10;
-
-	/**
 	 * City's length
 	 */
 	public static final int CITY_LENGTH = 500;

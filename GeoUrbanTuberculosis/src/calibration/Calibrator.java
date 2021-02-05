@@ -9,6 +9,21 @@ import simulation.SimulationBuilder;
 public class Calibrator {
 
 	/**
+	 * Ticks per simulation run (unit: hours)
+	 */
+	public static final double TICKS_PER_RUN = 8760;
+
+	/**
+	 * Ticks between simulation runs (unit: hours)
+	 */
+	public static final double TICKS_BETWEEN_RUNS = 100;
+
+	/**
+	 * Simulations per calibration step
+	 */
+	public static final double SIMULATIONS_PER_CALIBRATION_STEP = 10;
+
+	/**
 	 * Reference to simulation builder
 	 */
 	private SimulationBuilder simulationBuilder;
@@ -33,21 +48,19 @@ public class Calibrator {
 	@ScheduledMethod(start = 0, priority = 3)
 	public void init() {
 		int calibrationSteps = 5;
-		double endTime = calibrationSteps
-				* SimulationBuilder.SIMULATIONS_PER_CALIBRATION_STEP
-				* (SimulationBuilder.TICKS_PER_RUN
-						+ SimulationBuilder.TICKS_BETWEEN_RUNS);
+		double endTime = calibrationSteps * SIMULATIONS_PER_CALIBRATION_STEP
+				* (TICKS_PER_RUN + TICKS_BETWEEN_RUNS);
 		RunEnvironment.getInstance().endAt(endTime);
 	}
 
 	/**
 	 * Handle the 'onNewSimulationRun' event
 	 */
-	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN
-			+ SimulationBuilder.TICKS_BETWEEN_RUNS, priority = 2)
+	@ScheduledMethod(start = 0, interval = TICKS_PER_RUN
+			+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
 		RandomHelper.init();
-		if (this.simulationRuns >= SimulationBuilder.SIMULATIONS_PER_CALIBRATION_STEP) {
+		if (this.simulationRuns >= SIMULATIONS_PER_CALIBRATION_STEP) {
 			updateParameters();
 			this.simulationRuns = 0;
 		}

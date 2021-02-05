@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import calibration.Calibrator;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
@@ -111,7 +112,7 @@ public class Citizen {
 	/**
 	 * Initialize
 	 */
-	@ScheduledMethod(start = 0, interval = SimulationBuilder.TICKS_PER_RUN, priority = 1)
+	@ScheduledMethod(start = 0, interval = Calibrator.TICKS_PER_RUN, priority = 1)
 	public void init() {
 		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
 		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
@@ -124,8 +125,8 @@ public class Citizen {
 	/**
 	 * Start
 	 */
-	@ScheduledMethod(start = 1, interval = SimulationBuilder.TICKS_PER_RUN
-			+ SimulationBuilder.TICKS_BETWEEN_RUNS)
+	@ScheduledMethod(start = 1, interval = Calibrator.TICKS_PER_RUN
+			+ Calibrator.TICKS_BETWEEN_RUNS)
 	public void start() {
 		initDisease();
 		assignReferenceLocations();
