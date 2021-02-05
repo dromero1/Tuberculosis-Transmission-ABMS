@@ -26,11 +26,6 @@ public class Calibrator {
 	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
 
 	/**
-	 * Reference to simulation builder
-	 */
-	private SimulationBuilder simulationBuilder;
-
-	/**
 	 * Current simulation run
 	 */
 	private int simulationRun;
@@ -39,6 +34,11 @@ public class Calibrator {
 	 * Incidence rates
 	 */
 	private List<Double> incidenceRates;
+
+	/**
+	 * Reference to simulation builder
+	 */
+	private SimulationBuilder simulationBuilder;
 
 	/**
 	 * Create a new calibrator
@@ -72,7 +72,7 @@ public class Calibrator {
 			RandomHelper.init();
 			this.simulationBuilder.outputManager.resetOutputs();
 		}
-		if (this.simulationRun > SIMULATIONS_PER_CALIBRATION_STEP) {
+		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
 			System.out.println(this.incidenceRates);
 			updateParameters();
 			resetMetrics();
