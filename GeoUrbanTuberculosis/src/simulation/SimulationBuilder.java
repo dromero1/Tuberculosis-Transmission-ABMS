@@ -6,6 +6,7 @@ import calibration.Calibrator;
 import config.SourcePaths;
 import datasource.Reader;
 import model.Citizen;
+import output.OutputManager;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -64,6 +65,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public ParametersAdapter parametersAdapter;
 
 	/**
+	 * Output manager
+	 */
+	public OutputManager outputManager;
+
+	/**
 	 * Reference to calibrator
 	 */
 	private Calibrator calibrator;
@@ -83,17 +89,20 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		// Read citizens' locations
 		this.locations = Reader
 				.readCitizensLocations(SourcePaths.CITIZENS_LOCATIONS_DATABASE);
-		// Add citizens to the simulation
+		// Initialize parameters' adapter
+		this.parametersAdapter = new ParametersAdapter();
+		context.add(this.parametersAdapter);
+		// Initialize citizens
 		List<Citizen> citizens = createCitizens();
 		for (Citizen citizen : citizens) {
 			context.add(citizen);
 		}
-		// Add parameters adapter to the simulation
-		this.parametersAdapter = new ParametersAdapter();
-		context.add(this.parametersAdapter);
-		// Add calibrator to the simulation
+		// Initialize calibrator
 		this.calibrator = new Calibrator(this);
 		context.add(this.calibrator);
+		// Initialize output manager
+		this.outputManager = new OutputManager();
+		context.add(this.outputManager);
 		return context;
 	}
 
@@ -129,8 +138,8 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	 * Create citizens
 	 */
 	private List<Citizen> createCitizens() {
-		int susceptibleCount = ParametersAdapter.getSusceptibleCount();
-		int exposedCount = ParametersAdapter.getExposedCount();
+		int susceptibleCount = this.parametersAdapter.getSusceptibleCount();
+		int exposedCount = this.parametersAdapter.getExposedCount();
 		List<Citizen> citizens = new ArrayList<>();
 		for (int i = 0; i < exposedCount; i++) {
 			Citizen citizen = new Citizen(this, true);

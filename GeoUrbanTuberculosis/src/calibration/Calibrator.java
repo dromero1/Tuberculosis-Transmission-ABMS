@@ -1,5 +1,7 @@
 package calibration;
 
+import java.util.ArrayList;
+import java.util.List;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
@@ -34,12 +36,18 @@ public class Calibrator {
 	private int simulationRuns;
 
 	/**
+	 * Incidence rates
+	 */
+	private List<Double> incidenceRates;
+
+	/**
 	 * Create a new calibrator
 	 *
 	 * @param simulationBuilder Simulation builder
 	 */
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
+		this.incidenceRates = new ArrayList<>();
 	}
 
 	/**
@@ -59,12 +67,26 @@ public class Calibrator {
 	@ScheduledMethod(start = 0, interval = TICKS_PER_RUN
 			+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
-		RandomHelper.init();
 		if (this.simulationRuns >= SIMULATIONS_PER_CALIBRATION_STEP) {
+			System.out.println(this.incidenceRates);
 			updateParameters();
 			this.simulationRuns = 0;
 		}
+		measureIncidenceRate();
+		RandomHelper.init();
+		this.simulationBuilder.outputManager.resetOutputs();
 		this.simulationRuns++;
+	}
+
+	/**
+	 * Measure incidence rate
+	 */
+	public void measureIncidenceRate() {
+		int newCases = this.simulationBuilder.outputManager.getNewCases();
+		int initialPopulation = this.simulationBuilder.parametersAdapter
+				.getSusceptibleCount();
+		double incidenceRate = newCases / initialPopulation;
+		this.incidenceRates.add(incidenceRate);
 	}
 
 	/**

@@ -74,7 +74,7 @@ public class ParametersAdapter {
 	/**
 	 * Get exposed count
 	 */
-	public static int getExposedCount() {
+	public int getExposedCount() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getInteger(EXPOSED_COUNT_PARAM_ID);
 	}
@@ -82,7 +82,7 @@ public class ParametersAdapter {
 	/**
 	 * Get susceptible count
 	 */
-	public static int getSusceptibleCount() {
+	public int getSusceptibleCount() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getInteger(SUSCEPTIBLE_COUNT_PARAM_ID);
 	}
@@ -90,7 +90,7 @@ public class ParametersAdapter {
 	/**
 	 * Get immunodepression share
 	 */
-	public static double getImmunodepressionShare() {
+	public double getImmunodepressionShare() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(IMMUNODEPRESSION_SHARE_PARAM_ID);
 	}
@@ -98,7 +98,7 @@ public class ParametersAdapter {
 	/**
 	 * Get alcohol drinkers share
 	 */
-	public static double getAlcoholDrinkersShare() {
+	public double getAlcoholDrinkersShare() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(ALCOHOL_DRINKERS_SHARE_PARAM_ID);
 	}
@@ -106,7 +106,7 @@ public class ParametersAdapter {
 	/**
 	 * Get smokers share
 	 */
-	public static double getSmokersShare() {
+	public double getSmokersShare() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(SMOKERS_SHARE_PARAM_ID);
 	}
@@ -114,7 +114,7 @@ public class ParametersAdapter {
 	/**
 	 * Get average room volume
 	 */
-	public static double getAverageRoomVolume() {
+	public double getAverageRoomVolume() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(AVERAGE_ROOM_VOLUME_PARAM_ID);
 	}
@@ -139,7 +139,7 @@ public class ParametersAdapter {
 	/**
 	 * Get mean diagnosis delay
 	 */
-	public static double getMeanDiagnosisDelay() {
+	public double getMeanDiagnosisDelay() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
 	}
@@ -147,7 +147,7 @@ public class ParametersAdapter {
 	/**
 	 * Get treatment dropout rate
 	 */
-	public static double getTreatmentDropoutRate() {
+	public double getTreatmentDropoutRate() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
@@ -155,7 +155,7 @@ public class ParametersAdapter {
 	/**
 	 * Get infection probability
 	 */
-	public static double getInfectionProbability() {
+	public double getInfectionProbability() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(INFECTION_PROBABILITY_PARAM_ID);
 	}

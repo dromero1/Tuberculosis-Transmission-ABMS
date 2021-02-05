@@ -114,9 +114,12 @@ public final class Randomizer {
 
 	/**
 	 * Get random days to diagnosis (unit: days)
+	 * 
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static double getRandomDaysToDiagnosis() {
-		double meanDiagnosisDelay = ParametersAdapter.getMeanDiagnosisDelay();
+	public static double getRandomDaysToDiagnosis(
+			ParametersAdapter parametersAdapter) {
+		double meanDiagnosisDelay = parametersAdapter.getMeanDiagnosisDelay();
 		double lambda = 1 / meanDiagnosisDelay;
 		Exponential exp = RandomHelper.createExponential(lambda);
 		return exp.nextDouble();
@@ -140,27 +143,35 @@ public final class Randomizer {
 
 	/**
 	 * Get random immunodeficiency
+	 * 
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static boolean getRandomImmunodeficiency() {
-		double p = ParametersAdapter.getImmunodepressionShare();
+	public static boolean getRandomImmunodeficiency(
+			ParametersAdapter parametersAdapter) {
+		double p = parametersAdapter.getImmunodepressionShare();
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
 		return r <= p;
 	}
 
 	/**
 	 * Get random smoker
+	 * 
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static boolean getRandomSmoker() {
-		double p = ParametersAdapter.getSmokersShare();
+	public static boolean getRandomSmoker(ParametersAdapter parametersAdapter) {
+		double p = parametersAdapter.getSmokersShare();
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
 		return r <= p;
 	}
 
 	/**
 	 * Get random alcohol drinker
+	 * 
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static boolean getRandomAlcoholDrinker() {
-		double p = ParametersAdapter.getAlcoholDrinkersShare();
+	public static boolean getRandomAlcoholDrinker(
+			ParametersAdapter parametersAdapter) {
+		double p = parametersAdapter.getAlcoholDrinkersShare();
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
 		return r <= p;
 	}
@@ -168,12 +179,13 @@ public final class Randomizer {
 	/**
 	 * Is the citizen getting exposed?
 	 * 
-	 * @param infectedPeople Infected people around
+	 * @param infectedPeople    Infected people around
+	 * @param parametersAdapter Parameters' adapter
 	 */
 	public static boolean isGettingExposed(int infectedPeople,
 			ParametersAdapter parametersAdapter) {
 		double aVr = parametersAdapter.getAverageRoomVentilationRate();
-		double aRv = ParametersAdapter.getAverageRoomVolume();
+		double aRv = parametersAdapter.getAverageRoomVolume();
 		double phi = infectedPeople * MEAN_QUANTA_PRODUCTION;
 		double p = (MEAN_PULMONARY_VENTILATION_RATE * phi) / (aRv * aVr);
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
@@ -182,9 +194,12 @@ public final class Randomizer {
 
 	/**
 	 * Is the citizen dropping treatment?
+	 * 
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static boolean isDroppingOutTreatment() {
-		double p = ParametersAdapter.getTreatmentDropoutRate();
+	public static boolean isDroppingOutTreatment(
+			ParametersAdapter parametersAdapter) {
+		double p = parametersAdapter.getTreatmentDropoutRate();
 		double r = RandomHelper.nextDoubleFromTo(0, 1);
 		return r <= p;
 	}
@@ -192,10 +207,12 @@ public final class Randomizer {
 	/**
 	 * Is the citizen getting infected?
 	 * 
-	 * @param citizen Citizen
+	 * @param citizen           Citizen
+	 * @param parametersAdapter Parameters' adapter
 	 */
-	public static boolean isGettingInfected(Citizen citizen) {
-		double p = ParametersAdapter.getInfectionProbability();
+	public static boolean isGettingInfected(Citizen citizen,
+			ParametersAdapter parametersAdapter) {
+		double p = parametersAdapter.getInfectionProbability();
 		if (citizen.isImmunodepressed()) {
 			p *= IMMUNODEFICIENCY_FOLD;
 		}

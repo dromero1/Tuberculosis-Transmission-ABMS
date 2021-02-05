@@ -65,19 +65,24 @@ public class Citizen {
 	private boolean wasInitiallyExposed;
 
 	/**
-	 * Is immunosuppressed? Whether the citizen is immunosuppressed or not.
+	 * Is the citizen immunosuppressed?
 	 */
 	private boolean isImmunosuppressed;
 
 	/**
-	 * Smokes? Whether the citizen smokes or not.
+	 * Does the citizen smoke?
 	 */
 	private boolean smokes;
 
 	/**
-	 * Drinks alcohol? Whether the citizen drinks alcohol or not.
+	 * Does the citizen drink alcohol?
 	 */
 	private boolean drinksAlcohol;
+
+	/**
+	 * Has the citizen notified the infection?
+	 */
+	private boolean hasNotifiedInfection;
 
 	/**
 	 * Reference to simulation builder
@@ -116,9 +121,13 @@ public class Citizen {
 	public void init() {
 		this.wakeUpTime = Randomizer.getRandomWakeUpTime();
 		this.returningHomeTime = Randomizer.getRandomReturningHomeTime();
-		this.isImmunosuppressed = Randomizer.getRandomImmunodeficiency();
-		this.smokes = Randomizer.getRandomSmoker();
-		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker();
+		this.isImmunosuppressed = Randomizer.getRandomImmunodeficiency(
+				this.simulationBuilder.parametersAdapter);
+		this.smokes = Randomizer
+				.getRandomSmoker(this.simulationBuilder.parametersAdapter);
+		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker(
+				this.simulationBuilder.parametersAdapter);
+		this.hasNotifiedInfection = false;
 		unscheduleProgrammedEvents();
 	}
 
@@ -176,7 +185,8 @@ public class Citizen {
 	 */
 	public void transitionToExposed(boolean isInitialSetup) {
 		this.compartment = Compartment.EXPOSED;
-		if (Randomizer.isGettingInfected(this) || isInitialSetup) {
+		if (Randomizer.isGettingInfected(this,
+				this.simulationBuilder.parametersAdapter) || isInitialSetup) {
 			double incubationPeriod = Randomizer.getRandomIncubationPeriod();
 			double ticks = TickConverter.daysToTicks(incubationPeriod);
 			EventScheduler eventScheduler = EventScheduler.getInstance();
@@ -199,11 +209,17 @@ public class Citizen {
 				PARTICLE_EXPELLING_INTERVAL, "expelParticles");
 		this.scheduledActions.add(this.expelAction);
 		// Schedule diagnosis
-		double daysToDiagnosis = Randomizer.getRandomDaysToDiagnosis();
+		double daysToDiagnosis = Randomizer.getRandomDaysToDiagnosis(
+				this.simulationBuilder.parametersAdapter);
 		double ticks = TickConverter.daysToTicks(daysToDiagnosis);
 		ISchedulableAction action = eventScheduler.scheduleOneTimeEvent(ticks,
 				this, "transitionToOnTreament");
 		this.scheduledActions.add(action);
+		// Notify infection
+		if (!this.hasNotifiedInfection) {
+			this.simulationBuilder.outputManager.onNewCase();
+			this.hasNotifiedInfection = true;
+		}
 	}
 
 	/**
@@ -215,7 +231,8 @@ public class Citizen {
 		unscheduleAction(this.expelAction);
 		this.scheduledActions.remove(this.expelAction);
 		// Schedule treatment dropout or recovery
-		if (Randomizer.isDroppingOutTreatment()) {
+		if (Randomizer.isDroppingOutTreatment(
+				this.simulationBuilder.parametersAdapter)) {
 			transitionToInfected();
 		} else {
 			double treatmentDuration = Randomizer.getRandomTreatmentDuration();
