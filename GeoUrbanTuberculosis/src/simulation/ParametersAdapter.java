@@ -62,6 +62,21 @@ public class ParametersAdapter {
 	private double averageRoomVentilationRate;
 
 	/**
+	 * Infection probability
+	 */
+	private double infectionProbability;
+
+	/**
+	 * Mean diagnosis delay
+	 */
+	private double meanDiagnosisDelay;
+
+	/**
+	 * Treatment dropout rate
+	 */
+	private double treatmentDropoutRate;
+
+	/**
 	 * Initialize
 	 */
 	@ScheduledMethod(start = 0, priority = 4)
@@ -69,6 +84,12 @@ public class ParametersAdapter {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		this.averageRoomVentilationRate = simParams
 				.getDouble(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
+		this.infectionProbability = simParams
+				.getDouble(INFECTION_PROBABILITY_PARAM_ID);
+		this.meanDiagnosisDelay = simParams
+				.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
+		this.treatmentDropoutRate = simParams
+				.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
 
 	/**
@@ -140,24 +161,21 @@ public class ParametersAdapter {
 	 * Get mean diagnosis delay
 	 */
 	public double getMeanDiagnosisDelay() {
-		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
+		return this.meanDiagnosisDelay;
 	}
 
 	/**
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
-		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		return this.treatmentDropoutRate;
 	}
 
 	/**
 	 * Get infection probability
 	 */
 	public double getInfectionProbability() {
-		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(INFECTION_PROBABILITY_PARAM_ID);
+		return this.infectionProbability;
 	}
 
 }
