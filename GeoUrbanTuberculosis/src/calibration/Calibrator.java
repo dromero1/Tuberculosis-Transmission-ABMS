@@ -140,6 +140,7 @@ public class Calibrator {
 	 */
 	public void resetMetrics() {
 		this.incidenceRates = new ArrayList<>();
+		this.meanIncidenceRate = 0.0;
 	}
 
 }
