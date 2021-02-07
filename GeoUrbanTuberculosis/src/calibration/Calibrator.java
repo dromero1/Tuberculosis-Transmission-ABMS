@@ -32,14 +32,14 @@ public class Calibrator {
 	private int simulationRun;
 
 	/**
-	 * Mean incidence rate
-	 */
-	private double meanIncidenceRate;
-
-	/**
 	 * Incidence rates
 	 */
 	private List<Double> incidenceRates;
+
+	/**
+	 * Mean incidence rate
+	 */
+	private double meanIncidenceRate;
 
 	/**
 	 * Residual
