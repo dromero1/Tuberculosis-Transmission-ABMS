@@ -5,30 +5,30 @@
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="averageRoomVentilationRate"
-		displayName="Average Room Ventilation Rate (AC/h)" type="double"
+		displayName="Average room ventilation rate (AC/h)" type="double"
 		defaultValue="3.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="averageRoomVolume"
-		displayName="Average Room Volume (m3)" type="double"
+		displayName="Average room volume (m3)" type="double"
 		defaultValue="75.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
-	<parameter name="exposedCount" displayName="Exposed Count"
+	<parameter name="exposedCount" displayName="Exposed count"
 		type="int" defaultValue="25" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="smokersShare"
-		displayName="Smokers Share (%)" type="double" defaultValue="0.0"
+		displayName="Smokers share (%)" type="double" defaultValue="0.0"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="meanDiagnosisDelay"
-		displayName="Mean Diagnosis Delay (days)" type="double"
+		displayName="Mean diagnosis delay (days)" type="double"
 		defaultValue="45.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="alcoholDrinkersShare"
-		displayName="Alcohol Drinkers Share (%)" type="double"
+		displayName="Alcohol drinkers share (%)" type="double"
 		defaultValue="0.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="immunodepressionShare"
-		displayName="Immunodepression Share (%)" type="double"
+		displayName="Immunodepression share (%)" type="double"
 		defaultValue="0.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="infectionProbability"
@@ -36,11 +36,15 @@
 		defaultValue="0.1" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="susceptibleCount"
-		displayName="Susceptible Count" type="int" defaultValue="500"
+		displayName="Susceptible count" type="int" defaultValue="500"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="treatmentDropoutRate"
-		displayName="Treatment Dropout Rate (%)" type="double"
+		displayName="Treatment dropout rate (%)" type="double"
 		defaultValue="0.0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="meanIncidenceRateGoal"
+		displayName="Mean incidence rate goal (%)" type="double"
+		defaultValue="0.5" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 </parameters>

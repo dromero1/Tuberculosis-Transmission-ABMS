@@ -2,6 +2,7 @@ package calibration;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
@@ -31,9 +32,19 @@ public class Calibrator {
 	private int simulationRun;
 
 	/**
+	 * Mean incidence rate
+	 */
+	private double meanIncidenceRate;
+
+	/**
 	 * Incidence rates
 	 */
 	private List<Double> incidenceRates;
+
+	/**
+	 * Residual
+	 */
+	private double residual;
 
 	/**
 	 * Reference to simulation builder
@@ -73,7 +84,9 @@ public class Calibrator {
 			this.simulationBuilder.outputManager.resetOutputs();
 		}
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
-			System.out.println(this.incidenceRates);
+			calculateMeanIncidenceRate();
+			calculateResidual();
+			System.out.println(this.residual);
 			updateParameters();
 			resetMetrics();
 			this.simulationRun = 0;
@@ -93,10 +106,23 @@ public class Calibrator {
 	}
 
 	/**
-	 * Reset metrics
+	 * Calculate mean incidence rate
 	 */
-	public void resetMetrics() {
-		this.incidenceRates = new ArrayList<>();
+	public void calculateMeanIncidenceRate() {
+		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+		for (double incidenceRate : this.incidenceRates) {
+			descriptiveStatistics.addValue(incidenceRate);
+		}
+		this.meanIncidenceRate = descriptiveStatistics.getMean();
+	}
+
+	/**
+	 * Calculate residual
+	 */
+	public void calculateResidual() {
+		double goal = this.simulationBuilder.parametersAdapter
+				.getMeanIncidenceRateGoal();
+		this.residual = Math.pow(this.meanIncidenceRate - goal, 2);
 	}
 
 	/**
@@ -107,6 +133,13 @@ public class Calibrator {
 		double aVr = parametersAdapter.getAverageRoomVentilationRate();
 		aVr = aVr * 0.1;
 		parametersAdapter.setAverageRoomVentilationRate(aVr);
+	}
+
+	/**
+	 * Reset metrics
+	 */
+	public void resetMetrics() {
+		this.incidenceRates = new ArrayList<>();
 	}
 
 }

@@ -57,6 +57,11 @@ public class ParametersAdapter {
 	private static final String INFECTION_PROBABILITY_PARAM_ID = "infectionProbability";
 
 	/**
+	 * Mean incidence rate goal parameter id
+	 */
+	private static final String MEAN_INCIDENCE_RATE_GOAL_PARAM_ID = "meanIncidenceRateGoal";
+
+	/**
 	 * Average room ventilation rate
 	 */
 	private double averageRoomVentilationRate;
@@ -141,6 +146,14 @@ public class ParametersAdapter {
 	}
 
 	/**
+	 * Get mean incidence rate goal
+	 */
+	public double getMeanIncidenceRateGoal() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(MEAN_INCIDENCE_RATE_GOAL_PARAM_ID);
+	}
+
+	/**
 	 * Get average room ventilation rate
 	 */
 	public double getAverageRoomVentilationRate() {
@@ -165,6 +178,15 @@ public class ParametersAdapter {
 	}
 
 	/**
+	 * Set mean diagnosis delay
+	 * 
+	 * @param meanDiagnosisDelay Mean diagnosis delay
+	 */
+	public void setMeanDiagnosisDelay(double meanDiagnosisDelay) {
+		this.meanDiagnosisDelay = meanDiagnosisDelay;
+	}
+
+	/**
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
@@ -172,10 +194,28 @@ public class ParametersAdapter {
 	}
 
 	/**
+	 * Set treatment dropout rate
+	 * 
+	 * @param treatmentDropoutRate Treatment dropout rate
+	 */
+	public void setTreatmentDropoutRate(double treatmentDropoutRate) {
+		this.treatmentDropoutRate = treatmentDropoutRate;
+	}
+
+	/**
 	 * Get infection probability
 	 */
 	public double getInfectionProbability() {
 		return this.infectionProbability;
+	}
+
+	/**
+	 * Set infection probability
+	 * 
+	 * @param infectionProbability Infection probability
+	 */
+	public void setInfectionProbability(double infectionProbability) {
+		this.infectionProbability = infectionProbability;
 	}
 
 }
