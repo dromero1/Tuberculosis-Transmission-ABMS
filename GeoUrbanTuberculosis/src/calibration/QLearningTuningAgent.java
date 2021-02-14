@@ -68,7 +68,7 @@ public class QLearningTuningAgent {
 	}
 
 	/**
-	 * Select action
+	 * Select action (epsilon-greedy)
 	 */
 	public Map<String, Double> selectAction() {
 		Map<String, Double> parametersSetup = new HashMap<>();
@@ -111,10 +111,6 @@ public class QLearningTuningAgent {
 	 * @param reward Reward
 	 */
 	public void updateLearning(double reward) {
-		for (Entry<String, List<Pair<Double, Double>>> parameter : this.qValues
-				.entrySet()) {
-
-		}
 	}
 
 }
