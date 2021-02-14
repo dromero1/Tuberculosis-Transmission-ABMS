@@ -2,6 +2,8 @@ package calibration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -37,14 +39,9 @@ public class Calibrator {
 	private List<Double> incidenceRates;
 
 	/**
-	 * Mean incidence rate
+	 * Q-learning-based tuning agent
 	 */
-	private double meanIncidenceRate;
-
-	/**
-	 * Residual
-	 */
-	private double residual;
+	private QLearningTuningAgent tuningAgent;
 
 	/**
 	 * Reference to simulation builder
@@ -58,6 +55,7 @@ public class Calibrator {
 	 */
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
+		this.tuningAgent = new QLearningTuningAgent();
 		this.incidenceRates = new ArrayList<>();
 	}
 
@@ -66,7 +64,12 @@ public class Calibrator {
 	 */
 	@ScheduledMethod(start = 0, priority = 3)
 	public void init() {
-		int calibrationSteps = 5;
+		// Initialize tuning agent
+		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
+				.getTunableParameters();
+		this.tuningAgent.init(tunableParameters);
+		// FIX AS SOON AS POSSIBLE
+		int calibrationSteps = 100;
 		double endTime = calibrationSteps * SIMULATIONS_PER_CALIBRATION_STEP
 				* (TICKS_PER_RUN + TICKS_BETWEEN_RUNS);
 		RunEnvironment.getInstance().endAt(endTime);
@@ -84,10 +87,9 @@ public class Calibrator {
 			this.simulationBuilder.outputManager.resetOutputs();
 		}
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
-			calculateMeanIncidenceRate();
-			calculateResidual();
-			System.out.println(this.residual);
-			updateParameters();
+			double calibrationError = calculateCalibrationError();
+			System.out.println(calibrationError);
+			updateParameters(calibrationError);
 			resetMetrics();
 			this.simulationRun = 0;
 		}
@@ -106,33 +108,35 @@ public class Calibrator {
 	}
 
 	/**
-	 * Calculate mean incidence rate
+	 * Calculate calibration error
 	 */
-	public void calculateMeanIncidenceRate() {
-		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
-		for (double incidenceRate : this.incidenceRates) {
-			descriptiveStatistics.addValue(incidenceRate);
-		}
-		this.meanIncidenceRate = descriptiveStatistics.getMean();
-	}
-
-	/**
-	 * Calculate residual
-	 */
-	public void calculateResidual() {
+	public double calculateCalibrationError() {
 		double goal = this.simulationBuilder.parametersAdapter
 				.getMeanIncidenceRateGoal();
-		this.residual = Math.pow(this.meanIncidenceRate - goal, 2);
+		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+		for (double incidenceRate : this.incidenceRates) {
+			descriptiveStatistics.addValue(Math.abs(incidenceRate - goal));
+		}
+		return descriptiveStatistics.getMean();
 	}
 
 	/**
 	 * Update parameters
+	 * 
+	 * @param calibrationError Calibration error
 	 */
-	public void updateParameters() {
+	public void updateParameters(double calibrationError) {
+		// Update learning device
+		this.tuningAgent.updateLearning(calibrationError);
+		// Procure new parameter setup
+		Map<String, Double> parameterSetup = this.tuningAgent.selectAction();
+		// Update simulation parameters
 		ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
-		double aVr = parametersAdapter.getAverageRoomVentilationRate();
-		aVr = aVr * 0.1;
-		parametersAdapter.setAverageRoomVentilationRate(aVr);
+		for (Entry<String, Double> parameter : parameterSetup.entrySet()) {
+			String key = parameter.getKey();
+			double value = parameter.getValue();
+			parametersAdapter.setParameterValue(key, value);
+		}
 	}
 
 	/**
@@ -140,7 +144,6 @@ public class Calibrator {
 	 */
 	public void resetMetrics() {
 		this.incidenceRates = new ArrayList<>();
-		this.meanIncidenceRate = 0.0;
 	}
 
 }

@@ -1,5 +1,7 @@
 package simulation;
 
+import java.util.HashMap;
+import java.util.Map;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
@@ -62,24 +64,16 @@ public class ParametersAdapter {
 	private static final String MEAN_INCIDENCE_RATE_GOAL_PARAM_ID = "meanIncidenceRateGoal";
 
 	/**
-	 * Average room ventilation rate
+	 * Tunable parameters
 	 */
-	private double averageRoomVentilationRate;
+	private Map<String, Double> tunableParameters;
 
 	/**
-	 * Infection probability
+	 * Create a new parameters adapter
 	 */
-	private double infectionProbability;
-
-	/**
-	 * Mean diagnosis delay
-	 */
-	private double meanDiagnosisDelay;
-
-	/**
-	 * Treatment dropout rate
-	 */
-	private double treatmentDropoutRate;
+	public ParametersAdapter() {
+		this.tunableParameters = new HashMap<>();
+	}
 
 	/**
 	 * Initialize
@@ -87,14 +81,20 @@ public class ParametersAdapter {
 	@ScheduledMethod(start = 0, priority = 4)
 	public void init() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		this.averageRoomVentilationRate = simParams
+		double averageRoomVentilationRate = simParams
 				.getDouble(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
-		this.infectionProbability = simParams
+		setParameterValue(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID,
+				averageRoomVentilationRate);
+		double infectionProbability = simParams
 				.getDouble(INFECTION_PROBABILITY_PARAM_ID);
-		this.meanDiagnosisDelay = simParams
+		setParameterValue(INFECTION_PROBABILITY_PARAM_ID, infectionProbability);
+		double meanDiagnosisDelay = simParams
 				.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
-		this.treatmentDropoutRate = simParams
+		setParameterValue(MEAN_DIAGNOSIS_DELAY_PARAM_ID, meanDiagnosisDelay);
+		double treatmentDropoutRate = simParams
 				.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		setParameterValue(TREATMENT_DROPOUT_RATE_PARAM_ID,
+				treatmentDropoutRate);
 	}
 
 	/**
@@ -157,65 +157,46 @@ public class ParametersAdapter {
 	 * Get average room ventilation rate
 	 */
 	public double getAverageRoomVentilationRate() {
-		return this.averageRoomVentilationRate;
-	}
-
-	/**
-	 * Set average room ventilation rate
-	 * 
-	 * @param averageRoomVentilationRate Average room ventilation rate
-	 */
-	public void setAverageRoomVentilationRate(
-			double averageRoomVentilationRate) {
-		this.averageRoomVentilationRate = averageRoomVentilationRate;
+		return this.tunableParameters
+				.get(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
 	}
 
 	/**
 	 * Get mean diagnosis delay
 	 */
 	public double getMeanDiagnosisDelay() {
-		return this.meanDiagnosisDelay;
-	}
-
-	/**
-	 * Set mean diagnosis delay
-	 * 
-	 * @param meanDiagnosisDelay Mean diagnosis delay
-	 */
-	public void setMeanDiagnosisDelay(double meanDiagnosisDelay) {
-		this.meanDiagnosisDelay = meanDiagnosisDelay;
+		return this.tunableParameters.get(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
 	}
 
 	/**
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
-		return this.treatmentDropoutRate;
-	}
-
-	/**
-	 * Set treatment dropout rate
-	 * 
-	 * @param treatmentDropoutRate Treatment dropout rate
-	 */
-	public void setTreatmentDropoutRate(double treatmentDropoutRate) {
-		this.treatmentDropoutRate = treatmentDropoutRate;
+		return this.tunableParameters.get(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
 
 	/**
 	 * Get infection probability
 	 */
 	public double getInfectionProbability() {
-		return this.infectionProbability;
+		return this.tunableParameters.get(INFECTION_PROBABILITY_PARAM_ID);
 	}
 
 	/**
-	 * Set infection probability
-	 * 
-	 * @param infectionProbability Infection probability
+	 * Get tunable parameters
 	 */
-	public void setInfectionProbability(double infectionProbability) {
-		this.infectionProbability = infectionProbability;
+	public Map<String, Double> getTunableParameters() {
+		return this.tunableParameters;
+	}
+
+	/**
+	 * Set parameter value
+	 * 
+	 * @param parameterId Parameter id
+	 * @param value       Parameter value
+	 */
+	public void setParameterValue(String parameterId, double value) {
+		this.tunableParameters.put(parameterId, value);
 	}
 
 }
