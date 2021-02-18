@@ -3,10 +3,4 @@
 	<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction
 		context="GeoUrbanTuberculosis"
 		file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
-	<repast.simphony.action.data_set
-		context="GeoUrbanTuberculosis"
-		file="repast.simphony.action.data_set_1.xml" />
-	<repast.simphony.action.file_sink
-		context="GeoUrbanTuberculosis"
-		file="repast.simphony.action.file_sink_2.xml" />
 </Scenario>

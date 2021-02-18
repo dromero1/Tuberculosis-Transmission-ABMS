@@ -11,22 +11,22 @@ import repast.simphony.util.collections.Pair;
 public class QLearningTuningAgent {
 
 	/**
-	 * Q-values for the state-action pairs
+	 * Q-values for state-action pairs
 	 */
 	protected Map<String, List<Pair<Double, Double>>> qValues;
 
 	/**
-	 * Epsilon parameter for the epsilon-greedy action selection
+	 * Epsilon parameter for epsilon-greedy action selection
 	 */
 	protected double epsilon;
 
 	/**
-	 * Learning rate for the update rule
+	 * Learning rate for update rule
 	 */
 	protected double learningRate;
 
 	/**
-	 * Discount factor for the update rule
+	 * Discount factor for update rule
 	 */
 	protected double discountFactor;
 
@@ -50,7 +50,7 @@ public class QLearningTuningAgent {
 			List<Pair<Double, Double>> actions = new ArrayList<>();
 			for (int i = 0; i <= 20; i++) {
 				double action = i * step;
-				double q0 = RandomHelper.nextDoubleFromTo(0, 1);
+				double q0 = 0;
 				actions.add(new Pair<>(action, q0));
 			}
 			this.qValues.put(parameter.getKey(), actions);
@@ -62,9 +62,9 @@ public class QLearningTuningAgent {
 	 */
 	public void fixParameters() {
 		// FIX AS SOON AS POSSIBLE
-		this.epsilon = 0.1;
-		this.learningRate = 0.1;
-		this.discountFactor = 0.8;
+		this.epsilon = 0.2;
+		this.learningRate = 0.3;
+		this.discountFactor = 0.9;
 	}
 
 	/**
