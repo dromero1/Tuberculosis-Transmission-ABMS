@@ -2,6 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 import java.util.List;
+import calibration.CalibrationParameter;
 import calibration.Calibrator;
 import config.SourcePaths;
 import datasource.Reader;
@@ -60,6 +61,11 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	public List<Pair<NdPoint, NdPoint>> locations;
 
 	/**
+	 * Calibration parameters
+	 */
+	public List<CalibrationParameter> calibrationSetup;
+
+	/**
 	 * Reference to parameters adapter
 	 */
 	public ParametersAdapter parametersAdapter;
@@ -89,6 +95,9 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		// Read citizens' locations
 		this.locations = Reader
 				.readCitizensLocations(SourcePaths.CITIZENS_LOCATIONS_DATABASE);
+		// Read calibration parameters
+		this.calibrationSetup = Reader
+				.readCalibrationSetup(SourcePaths.CALIBRATION_SETUP_DATABASE);
 		// Initialize parameters' adapter
 		this.parametersAdapter = new ParametersAdapter();
 		context.add(this.parametersAdapter);
