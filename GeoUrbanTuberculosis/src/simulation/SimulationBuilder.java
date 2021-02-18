@@ -2,6 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import calibration.CalibrationParameter;
 import calibration.Calibrator;
 import config.SourcePaths;
@@ -63,7 +64,7 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	/**
 	 * Calibration parameters
 	 */
-	public List<CalibrationParameter> calibrationSetup;
+	public Map<String, CalibrationParameter> calibrationSetup;
 
 	/**
 	 * Reference to parameters adapter

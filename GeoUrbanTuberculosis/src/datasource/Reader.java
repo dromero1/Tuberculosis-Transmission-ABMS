@@ -1,7 +1,9 @@
 package datasource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import calibration.CalibrationParameter;
 import config.SourceFeatures;
@@ -81,9 +83,9 @@ public final class Reader {
 	 * 
 	 * @param filename File name
 	 */
-	public static List<CalibrationParameter> readCalibrationSetup(
+	public static Map<String, CalibrationParameter> readCalibrationSetup(
 			String filename) {
-		List<CalibrationParameter> parameters = new ArrayList<>();
+		Map<String, CalibrationParameter> setup = new HashMap<>();
 		File file = new File(filename);
 		try (Scanner scanner = new Scanner(file)) {
 			boolean first = true;
@@ -117,13 +119,13 @@ public final class Reader {
 					}
 					CalibrationParameter parameter = new CalibrationParameter(
 							parameterId, tolerance, lowerBound, upperBound);
-					parameters.add(parameter);
+					setup.put(parameterId, parameter);
 				}
 			}
 		} catch (FileNotFoundException fnfe) {
 			fnfe.printStackTrace();
 		}
-		return parameters;
+		return setup;
 	}
 
 }
