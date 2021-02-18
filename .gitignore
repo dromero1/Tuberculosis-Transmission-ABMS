@@ -1,5 +1,6 @@
 GeoUrbanTuberculosis/output/*
 GeoUrbanTuberculosis/Repast.settings
+GeoUrbanTuberculosis/.gitignore
 *.class
 *.log
 *.log*

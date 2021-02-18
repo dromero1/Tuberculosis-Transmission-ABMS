@@ -38,6 +38,26 @@ public final class SourceFeatures {
 	public static final int CITIZENS_LOCATIONS_WORKPLACE_TYPE_COLUMN = 6;
 
 	/**
+	 * Calibration setup database - parameter id column
+	 */
+	public static final int CALIBRATION_SETUP_PARAMETER_ID_COLUMN = 0;
+
+	/**
+	 * Calibration setup database - tolerance column
+	 */
+	public static final int CALIBRATION_SETUP_TOLERANCE_COLUMN = 1;
+
+	/**
+	 * Calibration setup database - lower bound column
+	 */
+	public static final int CALIBRATION_LOWER_BOUND_COLUMN = 2;
+
+	/**
+	 * Calibration setup database - upper bound column
+	 */
+	public static final int CALIBRATION_UPPER_BOUND_COLUMN = 3;
+
+	/**
 	 * Private constructor
 	 */
 	private SourceFeatures() {
