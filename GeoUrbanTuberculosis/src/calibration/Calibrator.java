@@ -65,9 +65,10 @@ public class Calibrator {
 	@ScheduledMethod(start = 0, priority = 3)
 	public void init() {
 		// Initialize tuning agent
+		Map<String, CalibrationParameter> setup = this.simulationBuilder.calibrationSetup;
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
-		this.tuningAgent.init(tunableParameters);
+		this.tuningAgent.init(tunableParameters, setup);
 		// FIX AS SOON AS POSSIBLE
 		int calibrationSteps = 100;
 		double endTime = calibrationSteps * SIMULATIONS_PER_CALIBRATION_STEP

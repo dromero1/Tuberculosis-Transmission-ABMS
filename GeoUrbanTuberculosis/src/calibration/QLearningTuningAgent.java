@@ -42,18 +42,26 @@ public class QLearningTuningAgent {
 	 * Initialize learning
 	 * 
 	 * @param tunableParameters Tunable parameters
+	 * @param calibrationSetup  Calibration setup
 	 */
-	public void init(Map<String, Double> tunableParameters) {
+	public void init(Map<String, Double> tunableParameters,
+			Map<String, CalibrationParameter> calibrationSetup) {
 		for (Entry<String, Double> parameter : tunableParameters.entrySet()) {
-			// FIX AS SOON AS POSSIBLE
-			double step = parameter.getValue() * 0.10;
-			List<Pair<Double, Double>> actions = new ArrayList<>();
-			for (int i = 0; i <= 20; i++) {
-				double action = i * step;
+			String parameterId = parameter.getKey();
+			CalibrationParameter calibrationParameter = calibrationSetup
+					.get(parameterId);
+			double tolerance = calibrationParameter.getTolerance();
+			double lowerBound = calibrationParameter.getLowerBound();
+			double upperBound = calibrationParameter.getUpperBound();
+			double step = 2 * tolerance * (upperBound - lowerBound);
+			double numStates = Math.round((upperBound - lowerBound) / step);
+			List<Pair<Double, Double>> states = new ArrayList<>();
+			for (int i = 0; i <= numStates; i++) {
+				double action = lowerBound + i * step;
 				double q0 = 0;
-				actions.add(new Pair<>(action, q0));
+				states.add(new Pair<>(action, q0));
 			}
-			this.qValues.put(parameter.getKey(), actions);
+			this.qValues.put(parameterId, states);
 		}
 	}
 
