@@ -24,6 +24,11 @@ public class Calibrator {
 	public static final double TICKS_BETWEEN_RUNS = 100;
 
 	/**
+	 * Maximum calibration steps
+	 */
+	public static final double MAX_CALIBRATION_STEPS = 100;
+
+	/**
 	 * Simulations per calibration step
 	 */
 	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
@@ -69,24 +74,20 @@ public class Calibrator {
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
 		this.tuningAgent.init(tunableParameters, setup);
-		// FIX AS SOON AS POSSIBLE
-		int calibrationSteps = 100;
-		double endTime = calibrationSteps * SIMULATIONS_PER_CALIBRATION_STEP
+		// Schedule maximum end time
+		double maxEndTime = MAX_CALIBRATION_STEPS
+				* SIMULATIONS_PER_CALIBRATION_STEP
 				* (TICKS_PER_RUN + TICKS_BETWEEN_RUNS);
-		RunEnvironment.getInstance().endAt(endTime);
+		RunEnvironment.getInstance().endAt(maxEndTime);
 	}
 
 	/**
 	 * Handle the 'onNewSimulationRun' event
 	 */
-	@ScheduledMethod(start = 0, interval = TICKS_PER_RUN
-			+ TICKS_BETWEEN_RUNS, priority = 2)
+	@ScheduledMethod(start = TICKS_PER_RUN
+			+ TICKS_BETWEEN_RUNS, interval = TICKS_PER_RUN
+					+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
-		if (this.simulationRun > 0) {
-			measureIncidenceRate();
-			RandomHelper.init();
-			this.simulationBuilder.outputManager.resetOutputs();
-		}
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
 			double calibrationError = calculateCalibrationError();
 			System.out.println(calibrationError);
@@ -94,6 +95,9 @@ public class Calibrator {
 			resetMetrics();
 			this.simulationRun = 0;
 		}
+		measureIncidenceRate();
+		RandomHelper.init();
+		this.simulationBuilder.outputManager.resetOutputs();
 		this.simulationRun++;
 	}
 
@@ -112,11 +116,11 @@ public class Calibrator {
 	 * Calculate calibration error
 	 */
 	public double calculateCalibrationError() {
-		double goal = this.simulationBuilder.parametersAdapter
+		double reference = this.simulationBuilder.parametersAdapter
 				.getMeanIncidenceRateGoal();
 		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 		for (double incidenceRate : this.incidenceRates) {
-			descriptiveStatistics.addValue(Math.abs(incidenceRate - goal));
+			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
 		}
 		return descriptiveStatistics.getMean();
 	}
@@ -128,7 +132,9 @@ public class Calibrator {
 	 */
 	public void updateParameters(double calibrationError) {
 		// Update learning device
-		this.tuningAgent.updateLearning(calibrationError);
+		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
+				.getTunableParameters();
+		this.tuningAgent.updateLearning(calibrationError, tunableParameters);
 		// Procure new parameter setup
 		Map<String, Double> parameterSetup = this.tuningAgent.selectAction();
 		// Update simulation parameters

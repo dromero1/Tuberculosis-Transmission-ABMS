@@ -1,5 +1,5 @@
 PARAMETER_ID,TOLERANCE,LOWER_BOUND,UPPER_BOUND
-averageRoomVentilationRate,0.10,0.0,3.0
-meanDiagnosisDelay,0.10,10,50
-treatmentDropoutRate,0.10,0,1
-infectionProbability,0.10,0,1
+averageRoomVentilationRate,0.05,0.0,3.0
+meanDiagnosisDelay,0.05,10,50
+treatmentDropoutRate,0.05,0,1
+infectionProbability,0.05,0,1
