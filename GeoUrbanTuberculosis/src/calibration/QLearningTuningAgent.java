@@ -57,6 +57,7 @@ public class QLearningTuningAgent {
 		this.qValues = new HashMap<>();
 		this.parametersTags = new ArrayList<>();
 		this.lastCalibrationError = Double.POSITIVE_INFINITY;
+		this.currentParameter = "";
 		fixParameters();
 	}
 
@@ -172,7 +173,7 @@ public class QLearningTuningAgent {
 					qValue);
 		}
 		// Check parameter change
-		if (this.updateCounter >= 5) {
+		if (this.updateCounter >= 4) {
 			resetCurrentParameter();
 		}
 		// Update last calibration error
@@ -186,7 +187,7 @@ public class QLearningTuningAgent {
 	 */
 	private void fixParameters() {
 		// FIX AS SOON AS POSSIBLE
-		this.epsilon = 0.1;
+		this.epsilon = 0.2;
 		this.learningRate = 0.1;
 		this.discountFactor = 0.8;
 	}
@@ -201,7 +202,7 @@ public class QLearningTuningAgent {
 			double lastCalibrationError) {
 		double reward = Double.NEGATIVE_INFINITY;
 		if (Math.abs(calibrationError - lastCalibrationError) < 0.01) {
-			reward = 0;
+			reward = RandomHelper.nextDoubleFromTo(-0.1, 0.1);
 		} else if (calibrationError < lastCalibrationError) {
 			reward = 1;
 		} else if (calibrationError > lastCalibrationError) {
@@ -214,9 +215,13 @@ public class QLearningTuningAgent {
 	 * Reset current parameter
 	 */
 	private void resetCurrentParameter() {
-		int index = RandomHelper.nextIntFromTo(0,
-				this.parametersTags.size() - 1);
-		this.currentParameter = this.parametersTags.get(index);
+		String nextParameter = "";
+		do {
+			int index = RandomHelper.nextIntFromTo(0,
+					this.parametersTags.size() - 1);
+			nextParameter = this.parametersTags.get(index);
+		} while (this.currentParameter.equals(nextParameter));
+		this.currentParameter = nextParameter;
 		this.updateCounter = 0;
 	}
 
