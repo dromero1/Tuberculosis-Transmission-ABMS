@@ -128,7 +128,7 @@ public class Calibrator {
 			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
 		}
 		if (DEBUG) {
-			System.out.printf("> Num. incidence rates = %.4f%n",
+			System.out.printf("> Num. incidence rates = %d%n",
 					this.incidenceRates.size());
 		}
 		return descriptiveStatistics.getMean();
