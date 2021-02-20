@@ -3,11 +3,11 @@ package calibration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.util.collections.Pair;
 import simulation.ParametersAdapter;
 import simulation.SimulationBuilder;
 
@@ -62,6 +62,7 @@ public class Calibrator {
 		this.simulationBuilder = simulationBuilder;
 		this.tuningAgent = new QLearningTuningAgent();
 		this.incidenceRates = new ArrayList<>();
+		this.simulationRun = 1;
 	}
 
 	/**
@@ -88,14 +89,13 @@ public class Calibrator {
 			+ TICKS_BETWEEN_RUNS, interval = TICKS_PER_RUN
 					+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
+		measureIncidenceRate();
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
 			double calibrationError = calculateCalibrationError();
-			System.out.println(calibrationError);
 			updateParameters(calibrationError);
 			resetMetrics();
 			this.simulationRun = 0;
 		}
-		measureIncidenceRate();
 		RandomHelper.init();
 		this.simulationBuilder.outputManager.resetOutputs();
 		this.simulationRun++;
@@ -135,15 +135,14 @@ public class Calibrator {
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
 		this.tuningAgent.updateLearning(calibrationError, tunableParameters);
-		// Procure new parameter setup
-		Map<String, Double> parameterSetup = this.tuningAgent.selectAction();
+		// Select action
+		Pair<String, Double> parameterSelection = this.tuningAgent
+				.selectAction();
 		// Update simulation parameters
 		ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
-		for (Entry<String, Double> parameter : parameterSetup.entrySet()) {
-			String key = parameter.getKey();
-			double value = parameter.getValue();
-			parametersAdapter.setParameterValue(key, value);
-		}
+		String parameterId = parameterSelection.getFirst();
+		double value = parameterSelection.getSecond();
+		parametersAdapter.setParameterValue(parameterId, value);
 	}
 
 	/**

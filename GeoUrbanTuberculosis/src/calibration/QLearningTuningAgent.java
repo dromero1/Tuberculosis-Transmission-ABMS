@@ -31,10 +31,32 @@ public class QLearningTuningAgent {
 	private double discountFactor;
 
 	/**
+	 * Parameters' tags
+	 */
+	private List<String> parametersTags;
+
+	/**
+	 * Current parameter being tuned
+	 */
+	private String currentParameter;
+
+	/**
+	 * Last calibration error
+	 */
+	private double lastCalibrationError;
+
+	/**
+	 * Update counter
+	 */
+	private double updateCounter;
+
+	/**
 	 * Create a new Q-learning-based tuning agent
 	 */
 	public QLearningTuningAgent() {
 		this.qValues = new HashMap<>();
+		this.parametersTags = new ArrayList<>();
+		this.lastCalibrationError = Double.POSITIVE_INFINITY;
 		fixParameters();
 	}
 
@@ -62,45 +84,41 @@ public class QLearningTuningAgent {
 				actions.add(new Pair<>(action, q0));
 			}
 			this.qValues.put(parameterId, actions);
+			this.parametersTags.add(parameterId);
 		}
+		resetCurrentParameter();
 	}
 
 	/**
 	 * Select action (epsilon-greedy)
 	 */
-	public Map<String, Double> selectAction() {
-		Map<String, Double> parametersSetup = new HashMap<>();
-		for (Entry<String, List<Pair<Double, Double>>> parameter : this.qValues
-				.entrySet()) {
-			List<Pair<Double, Double>> parameterSpace = parameter.getValue();
-			Pair<Double, Double> selectedPoint = null;
-			double r = RandomHelper.nextDoubleFromTo(0, 1);
-			int index = -1;
-			if (r < 1 - this.epsilon) {
-				double topValue = Double.NEGATIVE_INFINITY;
-				List<Pair<Double, Double>> ties = new ArrayList<>();
-				for (Pair<Double, Double> point : parameterSpace) {
-					double qValue = point.getSecond();
-					if (qValue > topValue) {
-						topValue = qValue;
-						ties.clear();
-						ties.add(point);
-					} else if (qValue == topValue) {
-						ties.add(point);
-					}
+	public Pair<String, Double> selectAction() {
+		List<Pair<Double, Double>> parameterSpace = this.qValues
+				.get(this.currentParameter);
+		Pair<Double, Double> selectedPoint = null;
+		double r = RandomHelper.nextDoubleFromTo(0, 1);
+		int index = -1;
+		if (r < 1 - this.epsilon) {
+			double topValue = Double.NEGATIVE_INFINITY;
+			List<Pair<Double, Double>> ties = new ArrayList<>();
+			for (Pair<Double, Double> point : parameterSpace) {
+				double qValue = point.getSecond();
+				if (qValue > topValue) {
+					topValue = qValue;
+					ties.clear();
+					ties.add(point);
+				} else if (qValue == topValue) {
+					ties.add(point);
 				}
-				index = RandomHelper.nextIntFromTo(0, ties.size() - 1);
-				selectedPoint = ties.get(index);
-			} else {
-				index = RandomHelper.nextIntFromTo(0,
-						parameterSpace.size() - 1);
-				selectedPoint = parameterSpace.get(index);
 			}
-			String parameterId = parameter.getKey();
-			double parameterValue = selectedPoint.getFirst();
-			parametersSetup.put(parameterId, parameterValue);
+			index = RandomHelper.nextIntFromTo(0, ties.size() - 1);
+			selectedPoint = ties.get(index);
+		} else {
+			index = RandomHelper.nextIntFromTo(0, parameterSpace.size() - 1);
+			selectedPoint = parameterSpace.get(index);
 		}
-		return parametersSetup;
+		double parameterValue = selectedPoint.getFirst();
+		return new Pair<>(this.currentParameter, parameterValue);
 	}
 
 	/**
@@ -112,43 +130,55 @@ public class QLearningTuningAgent {
 	public void updateLearning(double calibrationError,
 			Map<String, Double> tunableParameters) {
 		// Compute reward
-		double reward = computeReward(calibrationError, 0.01, 0.05);
-		// Update rule
-		for (Entry<String, List<Pair<Double, Double>>> parameter : this.qValues
-				.entrySet()) {
-			String parameterId = parameter.getKey();
-			double lastValue = tunableParameters.get(parameterId);
-			// Retrieve last point
-			List<Pair<Double, Double>> parameterSpace = parameter.getValue();
-			int indexLastAction = 0;
-			for (int i = 0; i < parameterSpace.size(); i++) {
-				Pair<Double, Double> point = parameterSpace.get(i);
-				double value = point.getFirst();
-				if (Math.abs(value - lastValue) < 1e-10) {
-					indexLastAction = i;
-					break;
-				}
+		double reward = computeReward(calibrationError,
+				this.lastCalibrationError);
+		// Get parameter space
+		List<Pair<Double, Double>> parameterSpace = this.qValues
+				.get(this.currentParameter);
+		// Retrieve last point
+		double lastValue = tunableParameters.get(this.currentParameter);
+		int indexLastAction = -1;
+		for (int i = 0; i < parameterSpace.size(); i++) {
+			Pair<Double, Double> point = parameterSpace.get(i);
+			double value = point.getFirst();
+			if (Math.abs(value - lastValue) < 1e-10) {
+				indexLastAction = i;
+				break;
 			}
-			Pair<Double, Double> lastPoint = parameterSpace
-					.get(indexLastAction);
-			// Obtain old Q-value
-			double oldQ = lastPoint.getSecond();
-			// Estimate optimal future value
-			double maxQ = Double.NEGATIVE_INFINITY;
-			for (Pair<Double, Double> point : parameterSpace) {
-				double q = point.getSecond();
-				if (q >= maxQ) {
-					maxQ = q;
-				}
-			}
-			// Compute new Q-value
-			double qValue = oldQ + this.learningRate
-					* (reward + this.discountFactor * maxQ - oldQ);
-			// Update Q-value
-			lastPoint.setSecond(qValue);
-			parameterSpace.set(indexLastAction, lastPoint);
-			this.qValues.put(parameterId, parameterSpace);
 		}
+		Pair<Double, Double> lastPoint = parameterSpace.get(indexLastAction);
+		// Obtain old Q-value
+		double oldQ = lastPoint.getSecond();
+		// Estimate optimal future value
+		double maxQ = Double.NEGATIVE_INFINITY;
+		for (Pair<Double, Double> point : parameterSpace) {
+			double q = point.getSecond();
+			if (q >= maxQ) {
+				maxQ = q;
+			}
+		}
+		// Compute new Q-value
+		double qValue = oldQ + this.learningRate
+				* (reward + this.discountFactor * maxQ - oldQ);
+		// Update Q-value
+		lastPoint.setSecond(qValue);
+		parameterSpace.set(indexLastAction, lastPoint);
+		this.qValues.put(this.currentParameter, parameterSpace);
+		// Display
+		if (true) {
+			System.out.printf(
+					"(Error = %.2f, Reward = %.2f, Param. %s, Value = %.2f, Q-value = %.2f)%n",
+					calibrationError, reward, this.currentParameter, lastValue,
+					qValue);
+		}
+		// Check parameter change
+		if (this.updateCounter >= 5) {
+			resetCurrentParameter();
+		}
+		// Update last calibration error
+		this.lastCalibrationError = calibrationError;
+		// Update counter
+		this.updateCounter++;
 	}
 
 	/**
@@ -156,27 +186,36 @@ public class QLearningTuningAgent {
 	 */
 	private void fixParameters() {
 		// FIX AS SOON AS POSSIBLE
-		this.epsilon = 0.2;
-		this.learningRate = 0.3;
-		this.discountFactor = 0.9;
+		this.epsilon = 0.1;
+		this.learningRate = 0.1;
+		this.discountFactor = 0.8;
 	}
 
 	/**
 	 * Compute reward
 	 * 
-	 * @param calibrationError Calibration error
-	 * @param lowThreshold     Low threshold
-	 * @param highThreshold    High threshold
+	 * @param calibrationError     Calibration error
+	 * @param lastCalibrationError Last calibration error
 	 */
-	private double computeReward(double calibrationError, double lowThreshold,
-			double highThreshold) {
+	private double computeReward(double calibrationError,
+			double lastCalibrationError) {
 		double reward = 0;
-		if (calibrationError < lowThreshold) {
-			reward = 10 / (calibrationError + 0.01);
-		} else if (calibrationError > highThreshold) {
-			reward = -10 * (calibrationError - highThreshold);
+		if (calibrationError < lastCalibrationError) {
+			reward = 1;
+		} else if (calibrationError > lastCalibrationError) {
+			reward = -1;
 		}
 		return reward;
+	}
+
+	/**
+	 * Reset current parameter
+	 */
+	private void resetCurrentParameter() {
+		int index = RandomHelper.nextIntFromTo(0,
+				this.parametersTags.size() - 1);
+		this.currentParameter = this.parametersTags.get(index);
+		this.updateCounter = 0;
 	}
 
 }

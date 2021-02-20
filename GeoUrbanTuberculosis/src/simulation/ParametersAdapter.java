@@ -88,13 +88,6 @@ public class ParametersAdapter {
 		double infectionProbability = simParams
 				.getDouble(INFECTION_PROBABILITY_PARAM_ID);
 		setParameterValue(INFECTION_PROBABILITY_PARAM_ID, infectionProbability);
-		double meanDiagnosisDelay = simParams
-				.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
-		setParameterValue(MEAN_DIAGNOSIS_DELAY_PARAM_ID, meanDiagnosisDelay);
-		double treatmentDropoutRate = simParams
-				.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
-		setParameterValue(TREATMENT_DROPOUT_RATE_PARAM_ID,
-				treatmentDropoutRate);
 	}
 
 	/**
@@ -165,14 +158,16 @@ public class ParametersAdapter {
 	 * Get mean diagnosis delay
 	 */
 	public double getMeanDiagnosisDelay() {
-		return this.tunableParameters.get(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
 	}
 
 	/**
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
-		return this.tunableParameters.get(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
 
 	/**
