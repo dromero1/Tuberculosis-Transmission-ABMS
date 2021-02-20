@@ -13,7 +13,7 @@
 		defaultValue="75.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="exposedCount" displayName="Exposed count"
-		type="int" defaultValue="25" isReadOnly="false"
+		type="int" defaultValue="250" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="smokersShare"
 		displayName="Smokers share (%)" type="double" defaultValue="0.0"
