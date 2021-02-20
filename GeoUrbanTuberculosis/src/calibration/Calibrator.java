@@ -34,6 +34,11 @@ public class Calibrator {
 	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
 
 	/**
+	 * Debug flag
+	 */
+	public static final boolean DEBUG = true;
+
+	/**
 	 * Current simulation run
 	 */
 	private int simulationRun;
@@ -121,6 +126,10 @@ public class Calibrator {
 		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 		for (double incidenceRate : this.incidenceRates) {
 			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
+		}
+		if (DEBUG) {
+			System.out.printf("> Num. incidence rates = %.4f%n",
+					this.incidenceRates.size());
 		}
 		return descriptiveStatistics.getMean();
 	}

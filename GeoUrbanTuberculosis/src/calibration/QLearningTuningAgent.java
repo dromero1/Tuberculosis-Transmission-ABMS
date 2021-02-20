@@ -11,6 +11,11 @@ import repast.simphony.util.collections.Pair;
 public class QLearningTuningAgent {
 
 	/**
+	 * Debug flag
+	 */
+	public static final boolean DEBUG = true;
+
+	/**
 	 * Q-values for state-action pairs
 	 */
 	private Map<String, List<Pair<Double, Double>>> qValues;
@@ -166,14 +171,14 @@ public class QLearningTuningAgent {
 		parameterSpace.set(indexLastAction, lastPoint);
 		this.qValues.put(this.currentParameter, parameterSpace);
 		// Display
-		if (true) {
+		if (DEBUG) {
 			System.out.printf(
-					"(Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f)%n",
+					"> Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f%n",
 					calibrationError, reward, this.currentParameter, lastValue,
 					qValue);
 		}
 		// Check parameter change
-		if (this.updateCounter >= 4) {
+		if (this.updateCounter >= 5) {
 			resetCurrentParameter();
 		}
 		// Update last calibration error
