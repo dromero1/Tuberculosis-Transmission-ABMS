@@ -172,9 +172,9 @@ public class QLearningTuningAgent {
 		// Display
 		if (DEBUG) {
 			System.out.printf(
-					"> Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f%n",
-					calibrationError, reward, this.currentParameter, lastValue,
-					qValue);
+					"> %d - Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f%n",
+					this.updateCounter, calibrationError, reward,
+					this.currentParameter, lastValue, qValue);
 		}
 		// Update last calibration error
 		this.lastCalibrationError = calibrationError;
