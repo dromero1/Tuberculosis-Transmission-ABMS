@@ -176,14 +176,14 @@ public class QLearningTuningAgent {
 					calibrationError, reward, this.currentParameter, lastValue,
 					qValue);
 		}
-		// Check parameter change
-		if (this.updateCounter >= 5 - 1) {
-			resetCurrentParameter();
-		}
 		// Update last calibration error
 		this.lastCalibrationError = calibrationError;
 		// Update counter
 		this.updateCounter++;
+		// Check parameter change
+		if (this.updateCounter >= 10) {
+			resetCurrentParameter();
+		}
 	}
 
 	/**
