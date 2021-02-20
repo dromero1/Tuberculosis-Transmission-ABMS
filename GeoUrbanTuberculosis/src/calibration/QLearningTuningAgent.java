@@ -177,7 +177,7 @@ public class QLearningTuningAgent {
 					qValue);
 		}
 		// Check parameter change
-		if (this.updateCounter >= 5) {
+		if (this.updateCounter >= 5 - 1) {
 			resetCurrentParameter();
 		}
 		// Update last calibration error
