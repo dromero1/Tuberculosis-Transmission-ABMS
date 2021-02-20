@@ -86,7 +86,7 @@ public class QLearningTuningAgent {
 			List<Pair<Double, Double>> actions = new ArrayList<>();
 			for (int i = 0; i <= numStates; i++) {
 				double action = lowerBound + i * step;
-				double q0 = RandomHelper.nextDoubleFromTo(0, 0.5);
+				double q0 = 0;
 				actions.add(new Pair<>(action, q0));
 			}
 			this.qValues.put(parameterId, actions);
