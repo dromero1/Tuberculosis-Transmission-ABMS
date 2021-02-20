@@ -36,7 +36,7 @@ public class Calibrator {
 	/**
 	 * Debug flag
 	 */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	/**
 	 * Current simulation run

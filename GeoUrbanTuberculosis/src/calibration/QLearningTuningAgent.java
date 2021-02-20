@@ -53,7 +53,7 @@ public class QLearningTuningAgent {
 	/**
 	 * Update counter
 	 */
-	private double updateCounter;
+	private int updateCounter;
 
 	/**
 	 * Create a new Q-learning-based tuning agent
