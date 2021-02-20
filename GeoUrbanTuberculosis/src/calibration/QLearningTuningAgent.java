@@ -61,7 +61,7 @@ public class QLearningTuningAgent {
 	public QLearningTuningAgent() {
 		this.qValues = new HashMap<>();
 		this.parametersTags = new ArrayList<>();
-		this.lastCalibrationError = Double.POSITIVE_INFINITY;
+		this.lastCalibrationError = Double.NaN;
 		this.currentParameter = "";
 		fixParameters();
 	}
@@ -136,8 +136,7 @@ public class QLearningTuningAgent {
 	public void updateLearning(double calibrationError,
 			Map<String, Double> tunableParameters) {
 		// Compute reward
-		double reward = computeReward(calibrationError,
-				this.lastCalibrationError);
+		double reward = computeReward(calibrationError);
 		// Get parameter space
 		List<Pair<Double, Double>> parameterSpace = this.qValues
 				.get(this.currentParameter);
@@ -200,17 +199,18 @@ public class QLearningTuningAgent {
 	/**
 	 * Compute reward
 	 * 
-	 * @param calibrationError     Calibration error
-	 * @param lastCalibrationError Last calibration error
+	 * @param calibrationError Calibration error
 	 */
-	private double computeReward(double calibrationError,
-			double lastCalibrationError) {
-		double reward = Double.NEGATIVE_INFINITY;
-		if (Math.abs(calibrationError - lastCalibrationError) < 0.01) {
+	private double computeReward(double calibrationError) {
+		double reward = Double.NaN;
+		if (this.lastCalibrationError == Double.NaN) {
+			reward = 0;
+		} else if (Math
+				.abs(calibrationError - this.lastCalibrationError) < 0.01) {
 			reward = RandomHelper.nextDoubleFromTo(-0.1, 0.1);
-		} else if (calibrationError < lastCalibrationError) {
+		} else if (calibrationError < this.lastCalibrationError) {
 			reward = 1;
-		} else if (calibrationError > lastCalibrationError) {
+		} else if (calibrationError > this.lastCalibrationError) {
 			reward = -1;
 		}
 		return reward;
