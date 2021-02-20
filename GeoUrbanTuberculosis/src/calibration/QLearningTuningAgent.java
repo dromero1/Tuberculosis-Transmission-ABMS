@@ -61,7 +61,7 @@ public class QLearningTuningAgent {
 	public QLearningTuningAgent() {
 		this.qValues = new HashMap<>();
 		this.parametersTags = new ArrayList<>();
-		this.lastCalibrationError = Double.NaN;
+		this.lastCalibrationError = Double.NEGATIVE_INFINITY;
 		this.currentParameter = "";
 		fixParameters();
 	}
@@ -203,7 +203,7 @@ public class QLearningTuningAgent {
 	 */
 	private double computeReward(double calibrationError) {
 		double reward = Double.NaN;
-		if (this.lastCalibrationError == Double.NaN) {
+		if (this.lastCalibrationError == Double.NEGATIVE_INFINITY) {
 			reward = 0;
 		} else if (Math
 				.abs(calibrationError - this.lastCalibrationError) < 0.01) {
