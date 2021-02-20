@@ -26,7 +26,7 @@ public class Calibrator {
 	/**
 	 * Maximum calibration steps
 	 */
-	public static final double MAX_CALIBRATION_STEPS = 100;
+	public static final double MAX_CALIBRATION_STEPS = 1000;
 
 	/**
 	 * Simulations per calibration step

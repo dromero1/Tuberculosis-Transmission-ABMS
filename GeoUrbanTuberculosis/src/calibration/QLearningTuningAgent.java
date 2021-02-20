@@ -181,7 +181,7 @@ public class QLearningTuningAgent {
 		// Update counter
 		this.updateCounter++;
 		// Check parameter change
-		if (this.updateCounter >= 10) {
+		if (this.updateCounter >= 20) {
 			resetCurrentParameter();
 		}
 	}
@@ -204,7 +204,7 @@ public class QLearningTuningAgent {
 	private double computeReward(double calibrationError) {
 		double reward = Double.NaN;
 		if (this.lastCalibrationError == Double.NEGATIVE_INFINITY || Math
-				.abs(calibrationError - this.lastCalibrationError) < 0.01) {
+				.abs(calibrationError - this.lastCalibrationError) < 0.025) {
 			reward = 0;
 		} else if (calibrationError < this.lastCalibrationError) {
 			reward = 1;
