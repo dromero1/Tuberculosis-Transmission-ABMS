@@ -80,7 +80,7 @@ public class QLearningTuningAgent {
 			List<Pair<Double, Double>> actions = new ArrayList<>();
 			for (int i = 0; i <= numStates; i++) {
 				double action = lowerBound + i * step;
-				double q0 = 0;
+				double q0 = RandomHelper.nextDoubleFromTo(0, 0.5);
 				actions.add(new Pair<>(action, q0));
 			}
 			this.qValues.put(parameterId, actions);
@@ -199,8 +199,10 @@ public class QLearningTuningAgent {
 	 */
 	private double computeReward(double calibrationError,
 			double lastCalibrationError) {
-		double reward = 0;
-		if (calibrationError < lastCalibrationError) {
+		double reward = Double.NEGATIVE_INFINITY;
+		if (Math.abs(calibrationError - lastCalibrationError) < 0.01) {
+			reward = 0;
+		} else if (calibrationError < lastCalibrationError) {
 			reward = 1;
 		} else if (calibrationError > lastCalibrationError) {
 			reward = -1;
