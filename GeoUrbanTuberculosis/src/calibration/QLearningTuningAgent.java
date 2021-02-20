@@ -167,7 +167,7 @@ public class QLearningTuningAgent {
 		// Display
 		if (true) {
 			System.out.printf(
-					"(Error = %.2f, Reward = %.2f, Param. %s, Value = %.2f, Q-value = %.2f)%n",
+					"(Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f)%n",
 					calibrationError, reward, this.currentParameter, lastValue,
 					qValue);
 		}
