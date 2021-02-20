@@ -203,11 +203,9 @@ public class QLearningTuningAgent {
 	 */
 	private double computeReward(double calibrationError) {
 		double reward = Double.NaN;
-		if (this.lastCalibrationError == Double.NEGATIVE_INFINITY) {
-			reward = 0;
-		} else if (Math
+		if (this.lastCalibrationError == Double.NEGATIVE_INFINITY || Math
 				.abs(calibrationError - this.lastCalibrationError) < 0.01) {
-			reward = RandomHelper.nextDoubleFromTo(-0.1, 0.1);
+			reward = 0;
 		} else if (calibrationError < this.lastCalibrationError) {
 			reward = 1;
 		} else if (calibrationError > this.lastCalibrationError) {
