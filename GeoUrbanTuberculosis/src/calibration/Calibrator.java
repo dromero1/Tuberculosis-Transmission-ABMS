@@ -31,7 +31,7 @@ public class Calibrator {
 	/**
 	 * Simulations per calibration step
 	 */
-	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 20;
+	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
 
 	/**
 	 * Debug flag
