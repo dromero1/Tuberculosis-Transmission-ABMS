@@ -13,7 +13,7 @@
 		defaultValue="75.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="exposedCount" displayName="Exposed count"
-		type="int" defaultValue="250" isReadOnly="false"
+		type="int" defaultValue="500" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="smokersShare"
 		displayName="Smokers share (%)" type="double" defaultValue="0.0"
@@ -36,7 +36,7 @@
 		defaultValue="0.2" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="susceptibleCount"
-		displayName="Susceptible count" type="int" defaultValue="5000"
+		displayName="Susceptible count" type="int" defaultValue="3000"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="treatmentDropoutRate"
