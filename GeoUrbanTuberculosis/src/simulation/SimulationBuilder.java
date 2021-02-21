@@ -27,12 +27,12 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	/**
 	 * City's length
 	 */
-	public static final int CITY_LENGTH = 50;
+	public static final int CITY_LENGTH = 10;
 
 	/**
 	 * City's width
 	 */
-	public static final int CITY_WIDTH = 50;
+	public static final int CITY_WIDTH = 10;
 
 	/**
 	 * Space projection id

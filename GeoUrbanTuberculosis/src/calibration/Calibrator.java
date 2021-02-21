@@ -26,12 +26,12 @@ public class Calibrator {
 	/**
 	 * Maximum calibration steps
 	 */
-	public static final double MAX_CALIBRATION_STEPS = 1000;
+	public static final double MAX_CALIBRATION_STEPS = 500;
 
 	/**
 	 * Simulations per calibration step
 	 */
-	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 10;
+	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 30;
 
 	/**
 	 * Debug flag
@@ -133,11 +133,12 @@ public class Calibrator {
 		for (double incidenceRate : this.incidenceRates) {
 			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
 		}
+		double mad = descriptiveStatistics.getPercentile(50);
 		if (DEBUG) {
-			System.out.printf("> Num. incidence rates = %d%n",
-					this.incidenceRates.size());
+			System.out.printf("> Num. incidence rates = %d, MAD = %.4f%n",
+					this.incidenceRates.size(), mad);
 		}
-		return descriptiveStatistics.getMean();
+		return mad;
 	}
 
 	/**

@@ -26,6 +26,11 @@ public class QLearningTuningAgent {
 	private double epsilon;
 
 	/**
+	 * Epsilon change
+	 */
+	private double epsilonDelta;
+
+	/**
 	 * Learning rate for update rule
 	 */
 	private double learningRate;
@@ -46,9 +51,9 @@ public class QLearningTuningAgent {
 	private String currentParameter;
 
 	/**
-	 * Last calibration error
+	 * Last best calibration error
 	 */
-	private double lastCalibrationError;
+	private double lastBestCalibrationError;
 
 	/**
 	 * Update counter
@@ -61,7 +66,7 @@ public class QLearningTuningAgent {
 	public QLearningTuningAgent() {
 		this.qValues = new HashMap<>();
 		this.parametersTags = new ArrayList<>();
-		this.lastCalibrationError = Double.NEGATIVE_INFINITY;
+		this.lastBestCalibrationError = Double.POSITIVE_INFINITY;
 		this.currentParameter = "";
 		fixParameters();
 	}
@@ -176,10 +181,14 @@ public class QLearningTuningAgent {
 					this.updateCounter, calibrationError, reward,
 					this.currentParameter, lastValue, qValue);
 		}
-		// Update last calibration error
-		this.lastCalibrationError = calibrationError;
+		// Update last best calibration error
+		if (calibrationError < this.lastBestCalibrationError) {
+			this.lastBestCalibrationError = calibrationError;
+		}
 		// Update counter
 		this.updateCounter++;
+		// Update epsilon
+		this.epsilon = this.epsilon - this.epsilonDelta;
 		// Check parameter change
 		if (this.updateCounter >= 20) {
 			resetCurrentParameter();
@@ -192,8 +201,9 @@ public class QLearningTuningAgent {
 	private void fixParameters() {
 		// FIX AS SOON AS POSSIBLE
 		this.epsilon = 0.2;
-		this.learningRate = 0.1;
+		this.learningRate = 0.2;
 		this.discountFactor = 0.8;
+		this.epsilonDelta = this.epsilon / Calibrator.MAX_CALIBRATION_STEPS;
 	}
 
 	/**
@@ -202,16 +212,12 @@ public class QLearningTuningAgent {
 	 * @param calibrationError Calibration error
 	 */
 	private double computeReward(double calibrationError) {
-		double reward = Double.NaN;
-		if (this.lastCalibrationError == Double.NEGATIVE_INFINITY || Math
-				.abs(calibrationError - this.lastCalibrationError) < 0.025) {
-			reward = 0;
-		} else if (calibrationError < this.lastCalibrationError) {
-			reward = 1;
-		} else if (calibrationError > this.lastCalibrationError) {
-			reward = -1;
+		if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY || Math
+				.abs(calibrationError - this.lastBestCalibrationError) < 0.01) {
+			return 0;
+		} else {
+			return (this.lastBestCalibrationError - calibrationError);
 		}
-		return reward;
 	}
 
 	/**

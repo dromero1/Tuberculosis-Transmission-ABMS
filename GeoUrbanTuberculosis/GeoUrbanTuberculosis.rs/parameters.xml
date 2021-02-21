@@ -6,14 +6,14 @@
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="averageRoomVentilationRate"
 		displayName="Average room ventilation rate (AC/h)" type="double"
-		defaultValue="3.0" isReadOnly="false"
+		defaultValue="1.2" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="averageRoomVolume"
 		displayName="Average room volume (m3)" type="double"
 		defaultValue="75.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="exposedCount" displayName="Exposed count"
-		type="int" defaultValue="100" isReadOnly="false"
+		type="int" defaultValue="50" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="smokersShare"
 		displayName="Smokers share (%)" type="double" defaultValue="0.0"
@@ -36,7 +36,7 @@
 		defaultValue="0.2" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="susceptibleCount"
-		displayName="Susceptible count" type="int" defaultValue="500"
+		displayName="Susceptible count" type="int" defaultValue="200"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="treatmentDropoutRate"
