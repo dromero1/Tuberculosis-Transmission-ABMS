@@ -380,8 +380,7 @@ public class Citizen {
 	 * Assign reference locations
 	 */
 	private void assignReferenceLocations() {
-		Pair<NdPoint, NdPoint> location = Heuristics
-				.getReferenceSpots(this.simulationBuilder.locations);
+		Pair<NdPoint, NdPoint> location = Heuristics.getReferenceSpots();
 		this.household = location.getFirst();
 		this.workplace = location.getSecond();
 	}

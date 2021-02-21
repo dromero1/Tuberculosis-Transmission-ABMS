@@ -1,9 +1,9 @@
 package model;
 
-import java.util.List;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.util.collections.Pair;
+import simulation.SimulationBuilder;
 
 public final class Heuristics {
 
@@ -16,13 +16,19 @@ public final class Heuristics {
 
 	/**
 	 * Get reference spots
-	 * 
-	 * @param locations Locations
 	 */
-	public static Pair<NdPoint, NdPoint> getReferenceSpots(
-			List<Pair<NdPoint, NdPoint>> locations) {
-		int index = RandomHelper.nextIntFromTo(0, locations.size() - 1);
-		return locations.get(index);
+	public static Pair<NdPoint, NdPoint> getReferenceSpots() {
+		double householdX = RandomHelper.nextDoubleFromTo(0,
+				SimulationBuilder.CITY_WIDTH);
+		double householdY = RandomHelper.nextDoubleFromTo(0,
+				SimulationBuilder.CITY_LENGTH);
+		NdPoint household = new NdPoint(householdX,householdY);
+		double workplaceX = RandomHelper.nextDoubleFromTo(0,
+				SimulationBuilder.CITY_WIDTH);
+		double workplaceY = RandomHelper.nextDoubleFromTo(0,
+				SimulationBuilder.CITY_LENGTH);
+		NdPoint workplace = new NdPoint(workplaceX,workplaceY);
+		return new Pair<>(household, workplace);
 	}
 
 }

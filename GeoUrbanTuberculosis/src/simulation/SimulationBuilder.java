@@ -16,25 +16,23 @@ import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.WrapAroundBorders;
-import repast.simphony.util.collections.Pair;
 
 public class SimulationBuilder implements ContextBuilder<Object> {
 
 	/**
 	 * City's length
 	 */
-	public static final int CITY_LENGTH = 500;
+	public static final int CITY_LENGTH = 50;
 
 	/**
 	 * City's width
 	 */
-	public static final int CITY_WIDTH = 500;
+	public static final int CITY_WIDTH = 50;
 
 	/**
 	 * Space projection id
@@ -55,11 +53,6 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 	 * Reference to grid projection
 	 */
 	public Grid<Object> grid;
-
-	/**
-	 * Citizens' locations
-	 */
-	public List<Pair<NdPoint, NdPoint>> locations;
 
 	/**
 	 * Calibration parameters
@@ -93,9 +86,6 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		this.space = createContinuousSpaceProjection(context);
 		// Create grid projection
 		this.grid = createGridProjection(context);
-		// Read citizens' locations
-		this.locations = Reader
-				.readCitizensLocations(SourcePaths.CITIZENS_LOCATIONS_DATABASE);
 		// Read calibration parameters
 		this.calibrationSetup = Reader
 				.readCalibrationSetup(SourcePaths.CALIBRATION_SETUP_DATABASE);

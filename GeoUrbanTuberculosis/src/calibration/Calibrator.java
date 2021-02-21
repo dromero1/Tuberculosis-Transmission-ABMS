@@ -111,10 +111,16 @@ public class Calibrator {
 	 */
 	public void measureIncidenceRate() {
 		int newCases = this.simulationBuilder.outputManager.getNewCases();
-		int initialPopulation = this.simulationBuilder.parametersAdapter
+		int initialSusceptibleCount = this.simulationBuilder.parametersAdapter
 				.getSusceptibleCount();
+		int initialExposedCount = this.simulationBuilder.parametersAdapter
+				.getExposedCount();
+		int initialPopulation = initialSusceptibleCount + initialExposedCount;
 		double incidenceRate = (newCases * 1.0) / initialPopulation;
 		this.incidenceRates.add(incidenceRate);
+		if (DEBUG) {
+			System.out.printf("> Incidence rate = %.4f%n", incidenceRate);
+		}
 	}
 
 	/**
