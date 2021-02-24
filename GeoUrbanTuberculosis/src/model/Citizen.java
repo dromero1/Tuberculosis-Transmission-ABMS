@@ -146,7 +146,7 @@ public class Citizen {
 		initDisease();
 		assignReferenceLocations();
 		scheduleRecurringEvents();
-		goTo(this.household);
+		goHome();
 	}
 
 	/**
@@ -164,16 +164,16 @@ public class Citizen {
 	}
 
 	/**
-	 * Wake up and go to workplace
+	 * Move to workplace
 	 */
-	public void wakeUp() {
+	public void goWork() {
 		goTo(this.workplace);
 	}
 
 	/**
-	 * Return to household
+	 * Move to household
 	 */
-	public void returnHome() {
+	public void goHome() {
 		goTo(this.household);
 	}
 
@@ -403,10 +403,10 @@ public class Citizen {
 	private void scheduleRecurringEvents() {
 		EventScheduler eventScheduler = EventScheduler.getInstance();
 		ISchedulableAction wakeUpAction = eventScheduler.scheduleRecurringEvent(
-				this.wakeUpTime, this, TickConverter.TICKS_PER_DAY, "wakeUp");
+				this.wakeUpTime, this, TickConverter.TICKS_PER_DAY, "goWork");
 		ISchedulableAction returnHomeAction = eventScheduler
 				.scheduleRecurringEvent(this.returningHomeTime, this,
-						TickConverter.TICKS_PER_DAY, "returnHome");
+						TickConverter.TICKS_PER_DAY, "goHome");
 		ISchedulableAction stepAction = eventScheduler.scheduleRecurringEvent(
 				this.wakeUpTime, this, TICKS_BETWEEN_STEPS, "step");
 		this.scheduledActions.add(wakeUpAction);
