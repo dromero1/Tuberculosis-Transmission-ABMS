@@ -1,9 +1,9 @@
 package styles;
 
-import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import java.awt.Color;
 import model.Citizen;
 import model.Compartment;
+import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 
 public class CitizenStyle extends DefaultStyleOGL2D {
 
