@@ -85,6 +85,11 @@ public class Citizen {
 	private boolean hasNotifiedInfection;
 
 	/**
+	 * Has the citizen notified the exposure?
+	 */
+	private boolean hasNotifiedExposure;
+
+	/**
 	 * Reference to simulation builder
 	 */
 	private SimulationBuilder simulationBuilder;
@@ -127,6 +132,7 @@ public class Citizen {
 				.getRandomSmoker(this.simulationBuilder.parametersAdapter);
 		this.drinksAlcohol = Randomizer.getRandomAlcoholDrinker(
 				this.simulationBuilder.parametersAdapter);
+		this.hasNotifiedExposure = false;
 		this.hasNotifiedInfection = false;
 		unscheduleProgrammedEvents();
 	}
@@ -196,6 +202,11 @@ public class Citizen {
 		} else {
 			transitionToSusceptible();
 		}
+		// Notify exposure
+		if (!this.hasNotifiedExposure) {
+			this.simulationBuilder.outputManager.onNewExposure();
+			this.hasNotifiedExposure = true;
+		}
 	}
 
 	/**
@@ -217,7 +228,7 @@ public class Citizen {
 		this.scheduledActions.add(action);
 		// Notify infection
 		if (!this.hasNotifiedInfection) {
-			this.simulationBuilder.outputManager.onNewCase();
+			this.simulationBuilder.outputManager.onNewInfection();
 			this.hasNotifiedInfection = true;
 		}
 	}

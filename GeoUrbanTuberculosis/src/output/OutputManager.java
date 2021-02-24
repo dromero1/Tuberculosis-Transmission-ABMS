@@ -3,29 +3,49 @@ package output;
 public class OutputManager {
 
 	/**
-	 * New cases (unit: people)
+	 * Infections
 	 */
-	private int newCases;
+	private int infections;
 
 	/**
-	 * Handle the 'onNewCase' event
+	 * Number of exposures
 	 */
-	public void onNewCase() {
-		this.newCases++;
+	private int exposures;
+
+	/**
+	 * Handle the 'onNewInfection' event
+	 */
+	public void onNewInfection() {
+		this.infections++;
+	}
+
+	/**
+	 * Handle the 'onNewExposure' event
+	 */
+	public void onNewExposure() {
+		this.exposures++;
+	}
+
+	/**
+	 * Get infections
+	 */
+	public int getInfections() {
+		return this.infections;
+	}
+
+	/**
+	 * Get exposures
+	 */
+	public int getExposures() {
+		return this.exposures;
 	}
 
 	/**
 	 * Reset outputs
 	 */
 	public void resetOutputs() {
-		this.newCases = 0;
-	}
-
-	/**
-	 * Get new cases
-	 */
-	public int getNewCases() {
-		return this.newCases;
+		this.infections = 0;
+		this.exposures = 0;
 	}
 
 }

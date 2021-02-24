@@ -53,6 +53,11 @@ public class Calibrator {
 	private List<Double> incidenceRates;
 
 	/**
+	 * Exposure rates
+	 */
+	private List<Double> exposureRates;
+
+	/**
 	 * Q-learning-based tuning agent
 	 */
 	private QLearningTuningAgent tuningAgent;
@@ -70,6 +75,7 @@ public class Calibrator {
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
 		this.incidenceRates = new ArrayList<>();
+		this.exposureRates = new ArrayList<>();
 	}
 
 	/**
@@ -95,7 +101,7 @@ public class Calibrator {
 			+ TICKS_BETWEEN_RUNS, interval = TICKS_PER_RUN
 					+ TICKS_BETWEEN_RUNS, priority = 2)
 	public void onNewSimulationRun() {
-		measureIncidenceRate();
+		measureOutputs();
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
 			double calibrationError = calculateCalibrationError();
 			updateParameters(calibrationError);
@@ -125,20 +131,28 @@ public class Calibrator {
 	}
 
 	/**
-	 * Measure incidence rate
+	 * Measure outputs
 	 */
-	private void measureIncidenceRate() {
-		int newCases = this.simulationBuilder.outputManager.getNewCases();
+	private void measureOutputs() {
+		// Measure incidence rate
+		int infections = this.simulationBuilder.outputManager.getInfections();
 		int initialSusceptibleCount = this.simulationBuilder.parametersAdapter
 				.getSusceptibleCount();
 		int initialExposedCount = this.simulationBuilder.parametersAdapter
 				.getExposedCount();
-		int initialPopulation = initialSusceptibleCount + initialExposedCount;
-		double incidenceRate = (newCases * 1.0) / initialPopulation;
-		if (DEBUG) {
-			System.out.printf("> Incidence rate = %.4f%n", incidenceRate);
-		}
+		int population = initialSusceptibleCount + initialExposedCount;
+		double incidenceRate = (infections * 1.0) / population;
+		// Measure mean infections per citizen
+		int exposures = this.simulationBuilder.outputManager.getExposures();
+		double exposureRate = (exposures * 1.0) / population;
+		// Save results
 		this.incidenceRates.add(incidenceRate);
+		this.exposureRates.add(exposureRate);
+		// Debugging only
+		if (DEBUG) {
+			System.out.printf("> Incidence rate = %.4f, Exposure rate = %.4f%n",
+					incidenceRate, exposureRate);
+		}
 	}
 
 	/**
@@ -152,6 +166,7 @@ public class Calibrator {
 			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
 		}
 		double mad = descriptiveStatistics.getPercentile(50);
+		// Debugging only
 		if (DEBUG) {
 			System.out.printf("> Num. incidence rates = %d, MAD = %.4f%n",
 					this.incidenceRates.size(), mad);
