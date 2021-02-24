@@ -191,6 +191,7 @@ public class Citizen {
 	 */
 	public void transitionToExposed(boolean isInitialSetup) {
 		this.compartment = Compartment.EXPOSED;
+		// Determine disease course
 		if (Randomizer.isGettingInfected(this,
 				this.simulationBuilder.parametersAdapter) || isInitialSetup) {
 			double incubationPeriod = Randomizer.getRandomIncubationPeriod();

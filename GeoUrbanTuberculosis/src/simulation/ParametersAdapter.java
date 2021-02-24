@@ -59,9 +59,14 @@ public class ParametersAdapter {
 	private static final String INFECTION_PROBABILITY_PARAM_ID = "infectionProbability";
 
 	/**
-	 * Mean incidence rate goal parameter id
+	 * Incidence rate goal parameter id
 	 */
-	private static final String MEAN_INCIDENCE_RATE_GOAL_PARAM_ID = "meanIncidenceRateGoal";
+	private static final String INCIDENCE_RATE_GOAL_PARAM_ID = "incidenceRateGoal";
+
+	/**
+	 * Exposure rate goal parameter id
+	 */
+	private static final String EXPOSURE_RATE_GOAL_PARAM_ID = "exposureRateGoal";
 
 	/**
 	 * Epsilon parameter id
@@ -158,11 +163,19 @@ public class ParametersAdapter {
 	}
 
 	/**
-	 * Get mean incidence rate goal
+	 * Get incidence rate goal
 	 */
-	public double getMeanIncidenceRateGoal() {
+	public double getIncidenceRateGoal() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(MEAN_INCIDENCE_RATE_GOAL_PARAM_ID);
+		return simParams.getDouble(INCIDENCE_RATE_GOAL_PARAM_ID);
+	}
+
+	/**
+	 * Get exposure rate goal
+	 */
+	public double getExposureRateGoal() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(EXPOSURE_RATE_GOAL_PARAM_ID);
 	}
 
 	/**

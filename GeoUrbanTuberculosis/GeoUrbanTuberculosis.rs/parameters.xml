@@ -43,9 +43,13 @@
 		displayName="Treatment dropout rate (%)" type="double"
 		defaultValue="0.0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
-	<parameter name="meanIncidenceRateGoal"
-		displayName="Mean incidence rate goal (%)" type="double"
-		defaultValue="0.5" isReadOnly="false"
+	<parameter name="incidenceRateGoal"
+		displayName="Incidence rate goal (%)" type="double" defaultValue="0.5"
+		isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="exposureRateGoal"
+		displayName="Exposure rate goal (%)" type="double" defaultValue="0.7"
+		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="learningRate" displayName="Learning rate"
 		type="double" defaultValue="0.2" isReadOnly="false"

@@ -150,13 +150,13 @@ public class QLearningTuningAgent {
 	/**
 	 * Update learning
 	 * 
-	 * @param calibrationError  Calibration error
+	 * @param calibrationErrors Calibration errors
 	 * @param tunableParameters Tunable parameters
 	 */
-	public void updateLearning(double calibrationError,
+	public void updateLearning(Pair<Double, Double> calibrationErrors,
 			Map<String, Double> tunableParameters) {
 		// Compute reward
-		double reward = computeReward(calibrationError);
+		double reward = computeReward(calibrationErrors);
 		// Get parameter space
 		List<Pair<Double, Double>> parameterSpace = this.qValues
 				.get(this.currentParameter);
@@ -189,17 +189,6 @@ public class QLearningTuningAgent {
 		lastPoint.setSecond(qValue);
 		parameterSpace.set(indexLastAction, lastPoint);
 		this.qValues.put(this.currentParameter, parameterSpace);
-		// Display
-		if (DEBUG) {
-			System.out.printf(
-					"> %d - Error = %.4f, Reward = %.4f, Param. %s, Value = %.4f, Q-value = %.4f%n",
-					this.updateCounter, calibrationError, reward,
-					this.currentParameter, lastValue, qValue);
-		}
-		// Update last best calibration error
-		if (calibrationError < this.lastBestCalibrationError) {
-			this.lastBestCalibrationError = calibrationError;
-		}
 		// Update counter
 		this.updateCounter++;
 		// Update epsilon
@@ -208,6 +197,17 @@ public class QLearningTuningAgent {
 		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
 			resetCurrentParameter();
 		}
+		// Debugging only
+		if (DEBUG) {
+			double incidenceRateError = calibrationErrors.getFirst();
+			double exposureRateError = calibrationErrors.getSecond();
+			System.out.printf(
+					"> %d - Error Ir = %.4f, Error Ir = %.4f, Reward = %.4f, ",
+					this.updateCounter, incidenceRateError, exposureRateError,
+					reward);
+			System.out.printf("Param. %s, Value = %.4f, Q-value = %.4f%n",
+					this.currentParameter, lastValue, qValue);
+		}
 	}
 
 	/**
@@ -215,7 +215,8 @@ public class QLearningTuningAgent {
 	 * 
 	 * @param calibrationError Calibration error
 	 */
-	private double computeReward(double calibrationError) {
+	private double computeReward(Pair<Double, Double> calibrationErrors) {
+		double calibrationError = calibrationErrors.getFirst();
 		if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY
 				|| Math.abs(calibrationError
 						- this.lastBestCalibrationError) < JUST_NOTICEABLE_ERROR_DIFFERENCE) {

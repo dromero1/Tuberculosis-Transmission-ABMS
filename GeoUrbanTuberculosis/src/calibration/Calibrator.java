@@ -103,8 +103,8 @@ public class Calibrator {
 	public void onNewSimulationRun() {
 		measureOutputs();
 		if (this.simulationRun >= SIMULATIONS_PER_CALIBRATION_STEP) {
-			double calibrationError = calculateCalibrationError();
-			updateParameters(calibrationError);
+			Pair<Double, Double> calibrationErrors = calculateCalibrationErrors();
+			updateParameters(calibrationErrors);
 			resetMetrics();
 			this.simulationRun = 0;
 		}
@@ -158,32 +158,42 @@ public class Calibrator {
 	/**
 	 * Calculate calibration error
 	 */
-	private double calculateCalibrationError() {
-		double reference = this.simulationBuilder.parametersAdapter
-				.getMeanIncidenceRateGoal();
-		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+	private Pair<Double, Double> calculateCalibrationErrors() {
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		// Calculate incidence rates' MAD
+		double incidenceGoal = this.simulationBuilder.parametersAdapter
+				.getIncidenceRateGoal();
 		for (double incidenceRate : this.incidenceRates) {
-			descriptiveStatistics.addValue(Math.abs(incidenceRate - reference));
+			stats.addValue(Math.abs(incidenceRate - incidenceGoal));
 		}
-		double mad = descriptiveStatistics.getPercentile(50);
+		double incidenceMAD = stats.getPercentile(50);
+		// Calculate exposure rates' MAD
+		double exposureGoal = this.simulationBuilder.parametersAdapter
+				.getExposureRateGoal();
+		stats.clear();
+		for (double exposureRate : this.exposureRates) {
+			stats.addValue(Math.abs(exposureRate - exposureGoal));
+		}
+		double exposureMAD = stats.getPercentile(50);
 		// Debugging only
 		if (DEBUG) {
-			System.out.printf("> Num. incidence rates = %d, MAD = %.4f%n",
-					this.incidenceRates.size(), mad);
+			System.out.printf(
+					"> Num. incidence rates = %d, MADi = %.4f, MADe = %.4f%n",
+					this.incidenceRates.size(), incidenceMAD, exposureMAD);
 		}
-		return mad;
+		return new Pair<>(incidenceMAD, exposureMAD);
 	}
 
 	/**
 	 * Update parameters
 	 * 
-	 * @param calibrationError Calibration error
+	 * @param calibrationErrors Calibration errors
 	 */
-	private void updateParameters(double calibrationError) {
+	private void updateParameters(Pair<Double, Double> calibrationErrors) {
 		// Update learning device
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
-		this.tuningAgent.updateLearning(calibrationError, tunableParameters);
+		this.tuningAgent.updateLearning(calibrationErrors, tunableParameters);
 		// Select action
 		Pair<String, Double> parameterSelection = this.tuningAgent
 				.selectAction();
