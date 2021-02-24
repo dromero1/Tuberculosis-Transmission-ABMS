@@ -64,6 +64,21 @@ public class ParametersAdapter {
 	private static final String MEAN_INCIDENCE_RATE_GOAL_PARAM_ID = "meanIncidenceRateGoal";
 
 	/**
+	 * Epsilon parameter id
+	 */
+	private static final String EPSILON_PARAM_ID = "epsilon";
+
+	/**
+	 * Learning rate parameter id
+	 */
+	private static final String LEARNING_RATE_PARAM_ID = "learningRate";
+
+	/**
+	 * Discount factor parameter id
+	 */
+	private static final String DISCOUNT_FACTOR_PARAM_ID = "discountFactor";
+
+	/**
 	 * Tunable parameters
 	 */
 	private Map<String, Double> tunableParameters;
@@ -151,19 +166,35 @@ public class ParametersAdapter {
 	}
 
 	/**
-	 * Get average room ventilation rate
-	 */
-	public double getAverageRoomVentilationRate() {
-		return this.tunableParameters
-				.get(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
-	}
-
-	/**
 	 * Get mean diagnosis delay
 	 */
 	public double getMeanDiagnosisDelay() {
 		Parameters simParams = RunEnvironment.getInstance().getParameters();
 		return simParams.getDouble(MEAN_DIAGNOSIS_DELAY_PARAM_ID);
+	}
+
+	/**
+	 * Get epsilon
+	 */
+	public double getEpsilon() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(EPSILON_PARAM_ID);
+	}
+
+	/**
+	 * Get learning rate
+	 */
+	public double getLearningRate() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(LEARNING_RATE_PARAM_ID);
+	}
+
+	/**
+	 * Get discount factor
+	 */
+	public double getDiscountFactor() {
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(DISCOUNT_FACTOR_PARAM_ID);
 	}
 
 	/**
@@ -178,6 +209,14 @@ public class ParametersAdapter {
 	 */
 	public double getInfectionProbability() {
 		return this.tunableParameters.get(INFECTION_PROBABILITY_PARAM_ID);
+	}
+
+	/**
+	 * Get average room ventilation rate
+	 */
+	public double getAverageRoomVentilationRate() {
+		return this.tunableParameters
+				.get(AVERAGE_ROOM_VENTILATION_RATE_PARAM_ID);
 	}
 
 	/**

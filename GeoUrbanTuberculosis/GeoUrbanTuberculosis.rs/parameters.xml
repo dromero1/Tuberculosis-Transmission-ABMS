@@ -47,4 +47,14 @@
 		displayName="Mean incidence rate goal (%)" type="double"
 		defaultValue="0.5" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="learningRate" displayName="Learning rate"
+		type="double" defaultValue="0.2" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="epsilon" displayName="Epsilon" type="double"
+		defaultValue="0.2" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
+	<parameter name="discountFactor"
+		displayName="Discount factor" type="double" defaultValue="0.8"
+		isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 </parameters>

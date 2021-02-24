@@ -13,6 +13,11 @@ import simulation.SimulationBuilder;
 public class Calibrator {
 
 	/**
+	 * Debug flag
+	 */
+	public static final boolean DEBUG = true;
+
+	/**
 	 * Ticks per simulation run (unit: hours)
 	 */
 	public static final double TICKS_PER_RUN = 8760;
@@ -33,9 +38,9 @@ public class Calibrator {
 	public static final int SIMULATIONS_PER_CALIBRATION_STEP = 30;
 
 	/**
-	 * Debug flag
+	 * Calibrations runs before parameter swap
 	 */
-	public static final boolean DEBUG = true;
+	public static final int CALIBRATIONS_BEFORE_PARAMETER_SWAP = 20;
 
 	/**
 	 * Current simulation run
@@ -64,7 +69,6 @@ public class Calibrator {
 	 */
 	public Calibrator(SimulationBuilder simulationBuilder) {
 		this.simulationBuilder = simulationBuilder;
-		this.tuningAgent = new QLearningTuningAgent();
 		this.incidenceRates = new ArrayList<>();
 	}
 
@@ -76,10 +80,7 @@ public class Calibrator {
 		// Initialize simulation run
 		this.simulationRun = 1;
 		// Initialize tuning agent
-		Map<String, CalibrationParameter> setup = this.simulationBuilder.calibrationSetup;
-		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
-				.getTunableParameters();
-		this.tuningAgent.init(tunableParameters, setup);
+		initTuningAgent();
 		// Schedule end time
 		double endTime = MAX_CALIBRATION_STEPS
 				* SIMULATIONS_PER_CALIBRATION_STEP
@@ -106,9 +107,27 @@ public class Calibrator {
 	}
 
 	/**
+	 * Initialize tuning agent
+	 */
+	private void initTuningAgent() {
+		// Instantiate tuning agent
+		ParametersAdapter parametersAdapter = this.simulationBuilder.parametersAdapter;
+		double epsilon = parametersAdapter.getEpsilon();
+		double learningRate = parametersAdapter.getLearningRate();
+		double discountFactor = parametersAdapter.getDiscountFactor();
+		this.tuningAgent = new QLearningTuningAgent(epsilon, learningRate,
+				discountFactor);
+		// Activate tuning agent
+		Map<String, CalibrationParameter> setup = this.simulationBuilder.calibrationSetup;
+		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
+				.getTunableParameters();
+		this.tuningAgent.activate(tunableParameters, setup);
+	}
+
+	/**
 	 * Measure incidence rate
 	 */
-	public void measureIncidenceRate() {
+	private void measureIncidenceRate() {
 		int newCases = this.simulationBuilder.outputManager.getNewCases();
 		int initialSusceptibleCount = this.simulationBuilder.parametersAdapter
 				.getSusceptibleCount();
@@ -125,7 +144,7 @@ public class Calibrator {
 	/**
 	 * Calculate calibration error
 	 */
-	public double calculateCalibrationError() {
+	private double calculateCalibrationError() {
 		double reference = this.simulationBuilder.parametersAdapter
 				.getMeanIncidenceRateGoal();
 		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
@@ -145,7 +164,7 @@ public class Calibrator {
 	 * 
 	 * @param calibrationError Calibration error
 	 */
-	public void updateParameters(double calibrationError) {
+	private void updateParameters(double calibrationError) {
 		// Update learning device
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
@@ -163,7 +182,7 @@ public class Calibrator {
 	/**
 	 * Reset metrics
 	 */
-	public void resetMetrics() {
+	private void resetMetrics() {
 		this.incidenceRates = new ArrayList<>();
 	}
 

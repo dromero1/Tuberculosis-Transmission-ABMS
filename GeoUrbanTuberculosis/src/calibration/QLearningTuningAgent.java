@@ -16,6 +16,21 @@ public class QLearningTuningAgent {
 	public static final boolean DEBUG = true;
 
 	/**
+	 * Similarity threshold
+	 */
+	public static final double SIMILARITY_THRESHOLD = 1e-10;
+
+	/**
+	 * Initial Q-value estimate
+	 */
+	public static final int INITIAL_Q_VALUE_ESTIMATE = 0;
+
+	/**
+	 * Just noticeable error difference / meaningful error difference threshold
+	 */
+	public static final double JUST_NOTICEABLE_ERROR_DIFFERENCE = 0.01;
+
+	/**
 	 * Q-values for state-action pairs
 	 */
 	private Map<String, List<Pair<Double, Double>>> qValues;
@@ -24,11 +39,6 @@ public class QLearningTuningAgent {
 	 * Epsilon parameter for epsilon-greedy action selection
 	 */
 	private double epsilon;
-
-	/**
-	 * Epsilon change
-	 */
-	private double epsilonDelta;
 
 	/**
 	 * Learning rate for update rule
@@ -48,12 +58,12 @@ public class QLearningTuningAgent {
 	/**
 	 * Current parameter being tuned
 	 */
-	private String currentParameter;
+	private String currentParameter = "";
 
 	/**
 	 * Last best calibration error
 	 */
-	private double lastBestCalibrationError;
+	private double lastBestCalibrationError = Double.POSITIVE_INFINITY;
 
 	/**
 	 * Update counter
@@ -62,22 +72,27 @@ public class QLearningTuningAgent {
 
 	/**
 	 * Create a new Q-learning-based tuning agent
+	 * 
+	 * @param epsilon        Epsilon
+	 * @param learningRate   Learning rate
+	 * @param discountFactor Discount factor
 	 */
-	public QLearningTuningAgent() {
+	public QLearningTuningAgent(double epsilon, double learningRate,
+			double discountFactor) {
+		this.epsilon = epsilon;
+		this.learningRate = learningRate;
+		this.discountFactor = discountFactor;
 		this.qValues = new HashMap<>();
 		this.parametersTags = new ArrayList<>();
-		this.lastBestCalibrationError = Double.POSITIVE_INFINITY;
-		this.currentParameter = "";
-		fixParameters();
 	}
 
 	/**
-	 * Initialize learning
+	 * Activate
 	 * 
 	 * @param tunableParameters Tunable parameters
 	 * @param calibrationSetup  Calibration setup
 	 */
-	public void init(Map<String, Double> tunableParameters,
+	public void activate(Map<String, Double> tunableParameters,
 			Map<String, CalibrationParameter> calibrationSetup) {
 		for (Entry<String, Double> parameter : tunableParameters.entrySet()) {
 			String parameterId = parameter.getKey();
@@ -91,7 +106,7 @@ public class QLearningTuningAgent {
 			List<Pair<Double, Double>> actions = new ArrayList<>();
 			for (int i = 0; i <= numStates; i++) {
 				double action = lowerBound + i * step;
-				double q0 = 0;
+				double q0 = INITIAL_Q_VALUE_ESTIMATE;
 				actions.add(new Pair<>(action, q0));
 			}
 			this.qValues.put(parameterId, actions);
@@ -151,7 +166,7 @@ public class QLearningTuningAgent {
 		for (int i = 0; i < parameterSpace.size(); i++) {
 			Pair<Double, Double> point = parameterSpace.get(i);
 			double value = point.getFirst();
-			if (Math.abs(value - lastValue) < 1e-10) {
+			if (Math.abs(value - lastValue) < SIMILARITY_THRESHOLD) {
 				indexLastAction = i;
 				break;
 			}
@@ -188,22 +203,11 @@ public class QLearningTuningAgent {
 		// Update counter
 		this.updateCounter++;
 		// Update epsilon
-		this.epsilon = this.epsilon - this.epsilonDelta;
+		updateEpsilon();
 		// Check parameter change
-		if (this.updateCounter >= 20) {
+		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
 			resetCurrentParameter();
 		}
-	}
-
-	/**
-	 * Fix learning parameters
-	 */
-	private void fixParameters() {
-		// FIX AS SOON AS POSSIBLE
-		this.epsilon = 0.2;
-		this.learningRate = 0.2;
-		this.discountFactor = 0.8;
-		this.epsilonDelta = this.epsilon / Calibrator.MAX_CALIBRATION_STEPS;
 	}
 
 	/**
@@ -212,12 +216,21 @@ public class QLearningTuningAgent {
 	 * @param calibrationError Calibration error
 	 */
 	private double computeReward(double calibrationError) {
-		if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY || Math
-				.abs(calibrationError - this.lastBestCalibrationError) < 0.01) {
+		if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY
+				|| Math.abs(calibrationError
+						- this.lastBestCalibrationError) < JUST_NOTICEABLE_ERROR_DIFFERENCE) {
 			return 0;
 		} else {
 			return (this.lastBestCalibrationError - calibrationError);
 		}
+	}
+
+	/**
+	 * Update epsilon
+	 */
+	private void updateEpsilon() {
+		this.epsilon = this.epsilon
+				- this.epsilon / Calibrator.MAX_CALIBRATION_STEPS;
 	}
 
 	/**
