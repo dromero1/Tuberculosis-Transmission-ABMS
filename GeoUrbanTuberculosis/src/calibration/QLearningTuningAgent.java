@@ -26,14 +26,14 @@ public class QLearningTuningAgent {
 	public static final int INITIAL_Q_VALUE_ESTIMATE = 0;
 
 	/**
-	 * Just noticeable error difference / meaningful error difference threshold
-	 */
-	public static final double JUST_NOTICEABLE_ERROR_DIFFERENCE = 0.01;
-
-	/**
 	 * Q-values for state-action pairs
 	 */
 	private Map<String, List<Pair<Double, Double>>> qValues;
+
+	/**
+	 * Non-dominated calibration errors
+	 */
+	private List<Pair<Double, Double>> nonDominatedCalibrationErrors;
 
 	/**
 	 * Epsilon parameter for epsilon-greedy action selection
@@ -61,11 +61,6 @@ public class QLearningTuningAgent {
 	private String currentParameter = "";
 
 	/**
-	 * Last best calibration error
-	 */
-	private double lastBestCalibrationError = Double.POSITIVE_INFINITY;
-
-	/**
 	 * Update counter
 	 */
 	private int updateCounter;
@@ -83,6 +78,7 @@ public class QLearningTuningAgent {
 		this.learningRate = learningRate;
 		this.discountFactor = discountFactor;
 		this.qValues = new HashMap<>();
+		this.nonDominatedCalibrationErrors = new ArrayList<>();
 		this.parametersTags = new ArrayList<>();
 	}
 
@@ -213,16 +209,29 @@ public class QLearningTuningAgent {
 	/**
 	 * Compute reward
 	 * 
-	 * @param calibrationError Calibration error
+	 * @param calibrationErrors Calibration errors
 	 */
 	private double computeReward(Pair<Double, Double> calibrationErrors) {
-		double calibrationError = calibrationErrors.getFirst();
-		if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY
-				|| Math.abs(calibrationError
-						- this.lastBestCalibrationError) < JUST_NOTICEABLE_ERROR_DIFFERENCE) {
-			return 0;
+		if (this.nonDominatedCalibrationErrors.isEmpty()) {
+			this.nonDominatedCalibrationErrors.add(calibrationErrors);
+			return 0.0;
 		} else {
-			return (this.lastBestCalibrationError - calibrationError);
+			List<Pair<Double, Double>> dominatedSolutions = new ArrayList<>();
+			for (int i = 0; i < this.nonDominatedCalibrationErrors
+					.size(); i++) {
+				Pair<Double, Double> nonDominatedSolution = this.nonDominatedCalibrationErrors
+						.get(i);
+				if (dominates(calibrationErrors, nonDominatedSolution)) {
+					dominatedSolutions.add(nonDominatedSolution);
+				} else if (dominates(nonDominatedSolution, calibrationErrors)) {
+					return -1.0;
+				}
+			}
+			for (Pair<Double, Double> dominatedSolution : dominatedSolutions) {
+				this.nonDominatedCalibrationErrors.remove(dominatedSolution);
+			}
+			this.nonDominatedCalibrationErrors.add(calibrationErrors);
+			return 1.0;
 		}
 	}
 
@@ -246,6 +255,20 @@ public class QLearningTuningAgent {
 		} while (this.currentParameter.equals(nextParameter));
 		this.currentParameter = nextParameter;
 		this.updateCounter = 0;
+	}
+
+	/**
+	 * A dominates B?
+	 * 
+	 * @param a Error set A
+	 * @param b Error set B
+	 */
+	private boolean dominates(Pair<Double, Double> a, Pair<Double, Double> b) {
+		double aIrE = a.getFirst();
+		double aErE = a.getSecond();
+		double bIrE = b.getFirst();
+		double bErE = b.getSecond();
+		return (aIrE <= bIrE && aErE <= bErE) && (aIrE < bIrE || aErE < bErE);
 	}
 
 }
