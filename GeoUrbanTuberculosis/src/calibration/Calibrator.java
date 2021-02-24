@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.random.RandomHelper;
 import repast.simphony.util.collections.Pair;
 import simulation.ParametersAdapter;
 import simulation.SimulationBuilder;
@@ -36,7 +35,7 @@ public class Calibrator {
 	/**
 	 * Debug flag
 	 */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	/**
 	 * Current simulation run
@@ -67,7 +66,6 @@ public class Calibrator {
 		this.simulationBuilder = simulationBuilder;
 		this.tuningAgent = new QLearningTuningAgent();
 		this.incidenceRates = new ArrayList<>();
-		this.simulationRun = 1;
 	}
 
 	/**
@@ -75,16 +73,18 @@ public class Calibrator {
 	 */
 	@ScheduledMethod(start = 0, priority = 3)
 	public void init() {
+		// Initialize simulation run
+		this.simulationRun = 1;
 		// Initialize tuning agent
 		Map<String, CalibrationParameter> setup = this.simulationBuilder.calibrationSetup;
 		Map<String, Double> tunableParameters = this.simulationBuilder.parametersAdapter
 				.getTunableParameters();
 		this.tuningAgent.init(tunableParameters, setup);
-		// Schedule maximum end time
-		double maxEndTime = MAX_CALIBRATION_STEPS
+		// Schedule end time
+		double endTime = MAX_CALIBRATION_STEPS
 				* SIMULATIONS_PER_CALIBRATION_STEP
 				* (TICKS_PER_RUN + TICKS_BETWEEN_RUNS);
-		RunEnvironment.getInstance().endAt(maxEndTime);
+		RunEnvironment.getInstance().endAt(endTime);
 	}
 
 	/**
@@ -101,8 +101,7 @@ public class Calibrator {
 			resetMetrics();
 			this.simulationRun = 0;
 		}
-		RandomHelper.init();
-		this.simulationBuilder.outputManager.resetOutputs();
+		this.simulationBuilder.resetSimulation();
 		this.simulationRun++;
 	}
 
@@ -117,10 +116,10 @@ public class Calibrator {
 				.getExposedCount();
 		int initialPopulation = initialSusceptibleCount + initialExposedCount;
 		double incidenceRate = (newCases * 1.0) / initialPopulation;
-		this.incidenceRates.add(incidenceRate);
 		if (DEBUG) {
 			System.out.printf("> Incidence rate = %.4f%n", incidenceRate);
 		}
+		this.incidenceRates.add(incidenceRate);
 	}
 
 	/**

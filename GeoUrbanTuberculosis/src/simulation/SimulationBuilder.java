@@ -15,6 +15,7 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
@@ -104,6 +105,14 @@ public class SimulationBuilder implements ContextBuilder<Object> {
 		this.outputManager = new OutputManager();
 		context.add(this.outputManager);
 		return context;
+	}
+
+	/**
+	 * Reset simulation
+	 */
+	public void resetSimulation() {
+		this.outputManager.resetOutputs();
+		RandomHelper.init();
 	}
 
 	/**
