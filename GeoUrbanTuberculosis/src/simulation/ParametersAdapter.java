@@ -88,6 +88,10 @@ public class ParametersAdapter {
 		double infectionProbability = simParams
 				.getDouble(INFECTION_PROBABILITY_PARAM_ID);
 		setParameterValue(INFECTION_PROBABILITY_PARAM_ID, infectionProbability);
+		double treatmentDropoutRate = simParams
+				.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		setParameterValue(TREATMENT_DROPOUT_RATE_PARAM_ID,
+				treatmentDropoutRate);
 	}
 
 	/**
@@ -166,8 +170,7 @@ public class ParametersAdapter {
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
-		Parameters simParams = RunEnvironment.getInstance().getParameters();
-		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		return this.tunableParameters.get(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
 
 	/**
