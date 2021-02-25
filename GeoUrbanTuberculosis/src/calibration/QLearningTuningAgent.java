@@ -230,7 +230,10 @@ public class QLearningTuningAgent {
 			for (Pair<Double, Double> dominatedSolution : dominatedSolutions) {
 				this.nonDominatedCalibrationErrors.remove(dominatedSolution);
 			}
-			this.nonDominatedCalibrationErrors.add(calibrationErrors);
+			if (!this.nonDominatedCalibrationErrors
+					.contains(calibrationErrors)) {
+				this.nonDominatedCalibrationErrors.add(calibrationErrors);
+			}
 			return 1.0;
 		}
 	}
