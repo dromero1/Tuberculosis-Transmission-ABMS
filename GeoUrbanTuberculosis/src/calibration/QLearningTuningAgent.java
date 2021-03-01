@@ -201,8 +201,8 @@ public class QLearningTuningAgent {
 					"> %d - Error IrE = %.4f, Error ErE = %.4f, Reward = %.4f, ",
 					this.updateCounter, incidenceRateError, exposureRateError,
 					reward);
-			System.out.printf("Param. %s, Value = %.4f, Q-value = %.4f%n",
-					this.currentParameter, exposureRateError, qValue);
+			System.out.printf("Param = %s, Value = %.4f, Q-value = %.4f%n",
+					this.currentParameter, lastValue, qValue);
 		}
 	}
 
