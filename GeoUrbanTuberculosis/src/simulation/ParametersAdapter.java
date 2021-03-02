@@ -108,10 +108,6 @@ public class ParametersAdapter {
 		double infectionProbability = simParams
 				.getDouble(INFECTION_PROBABILITY_PARAM_ID);
 		setParameterValue(INFECTION_PROBABILITY_PARAM_ID, infectionProbability);
-		double treatmentDropoutRate = simParams
-				.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
-		setParameterValue(TREATMENT_DROPOUT_RATE_PARAM_ID,
-				treatmentDropoutRate);
 	}
 
 	/**
@@ -214,7 +210,8 @@ public class ParametersAdapter {
 	 * Get treatment dropout rate
 	 */
 	public double getTreatmentDropoutRate() {
-		return this.tunableParameters.get(TREATMENT_DROPOUT_RATE_PARAM_ID);
+		Parameters simParams = RunEnvironment.getInstance().getParameters();
+		return simParams.getDouble(TREATMENT_DROPOUT_RATE_PARAM_ID);
 	}
 
 	/**
@@ -242,11 +239,11 @@ public class ParametersAdapter {
 	/**
 	 * Set parameter value
 	 * 
-	 * @param parameterId Parameter id
-	 * @param value       Parameter value
+	 * @param parameterId    Parameter id
+	 * @param parameterValue Parameter value
 	 */
-	public void setParameterValue(String parameterId, double value) {
-		this.tunableParameters.put(parameterId, value);
+	public void setParameterValue(String parameterId, double parameterValue) {
+		this.tunableParameters.put(parameterId, parameterValue);
 	}
 
 }

@@ -31,9 +31,9 @@ public class QLearningTuningAgent {
 	private Map<String, List<Pair<Double, Double>>> qValues;
 
 	/**
-	 * Non-dominated calibration errors
+	 * Pareto optimal setups
 	 */
-	private List<Pair<Double, Double>> nonDominatedCalibrationErrors;
+	private List<ParetoOptimalSetup> paretoOptimalSetups;
 
 	/**
 	 * Epsilon parameter for epsilon-greedy action selection
@@ -78,7 +78,7 @@ public class QLearningTuningAgent {
 		this.learningRate = learningRate;
 		this.discountFactor = discountFactor;
 		this.qValues = new HashMap<>();
-		this.nonDominatedCalibrationErrors = new ArrayList<>();
+		this.paretoOptimalSetups = new ArrayList<>();
 		this.parametersTags = new ArrayList<>();
 	}
 
@@ -151,8 +151,6 @@ public class QLearningTuningAgent {
 	 */
 	public void updateLearning(Pair<Double, Double> calibrationErrors,
 			Map<String, Double> tunableParameters) {
-		// Compute reward
-		double reward = computeReward(calibrationErrors);
 		// Get parameter space
 		List<Pair<Double, Double>> parameterSpace = this.qValues
 				.get(this.currentParameter);
@@ -168,6 +166,8 @@ public class QLearningTuningAgent {
 			}
 		}
 		Pair<Double, Double> lastPoint = parameterSpace.get(indexLastAction);
+		// Compute reward
+		double reward = computeReward(calibrationErrors, lastValue);
 		// Obtain old Q-value
 		double oldQ = lastPoint.getSecond();
 		// Estimate optimal future value
@@ -210,29 +210,35 @@ public class QLearningTuningAgent {
 	 * Compute reward
 	 * 
 	 * @param calibrationErrors Calibration errors
+	 * @param parameterValue    Parameter value
 	 */
-	private double computeReward(Pair<Double, Double> calibrationErrors) {
-		if (this.nonDominatedCalibrationErrors.isEmpty()) {
-			this.nonDominatedCalibrationErrors.add(calibrationErrors);
+	private double computeReward(Pair<Double, Double> calibrationErrors,
+			double parameterValue) {
+		ParetoOptimalSetup currentSetup = new ParetoOptimalSetup(
+				this.currentParameter, parameterValue, calibrationErrors);
+		if (this.paretoOptimalSetups.isEmpty()) {
+			this.paretoOptimalSetups.add(currentSetup);
 			return 0.0;
 		} else {
-			List<Pair<Double, Double>> dominatedSolutions = new ArrayList<>();
-			for (int i = 0; i < this.nonDominatedCalibrationErrors
-					.size(); i++) {
-				Pair<Double, Double> nonDominatedSolution = this.nonDominatedCalibrationErrors
+			List<ParetoOptimalSetup> dominatedSolutions = new ArrayList<>();
+			for (int i = 0; i < this.paretoOptimalSetups.size(); i++) {
+				ParetoOptimalSetup paretoSetup = this.paretoOptimalSetups
 						.get(i);
-				if (dominates(calibrationErrors, nonDominatedSolution)) {
-					dominatedSolutions.add(nonDominatedSolution);
-				} else if (dominates(nonDominatedSolution, calibrationErrors)) {
-					return -1.0;
+				if (dominates(currentSetup, paretoSetup)) {
+					dominatedSolutions.add(paretoSetup);
+				} else if (dominates(paretoSetup, currentSetup)) {
+					if (currentSetup.isAlmostTheSameAs(paretoSetup)) {
+						return 0.02;
+					} else {
+						return -1.0;
+					}
 				}
 			}
-			for (Pair<Double, Double> dominatedSolution : dominatedSolutions) {
-				this.nonDominatedCalibrationErrors.remove(dominatedSolution);
+			for (ParetoOptimalSetup dominatedSolution : dominatedSolutions) {
+				this.paretoOptimalSetups.remove(dominatedSolution);
 			}
-			if (!this.nonDominatedCalibrationErrors
-					.contains(calibrationErrors)) {
-				this.nonDominatedCalibrationErrors.add(calibrationErrors);
+			if (!this.paretoOptimalSetups.contains(currentSetup)) {
+				this.paretoOptimalSetups.add(currentSetup);
 			}
 			return 1.0;
 		}
@@ -261,16 +267,17 @@ public class QLearningTuningAgent {
 	}
 
 	/**
-	 * A dominates B?
+	 * Setup A dominates Setup B?
 	 * 
-	 * @param a Error set A
-	 * @param b Error set B
+	 * @param setupA Setup A
+	 * @param setupB Setup B
 	 */
-	private boolean dominates(Pair<Double, Double> a, Pair<Double, Double> b) {
-		double aIrE = a.getFirst();
-		double aErE = a.getSecond();
-		double bIrE = b.getFirst();
-		double bErE = b.getSecond();
+	private boolean dominates(ParetoOptimalSetup setupA,
+			ParetoOptimalSetup setupB) {
+		double aIrE = setupA.getIncidenceRateError();
+		double aErE = setupA.getExposureRateError();
+		double bIrE = setupB.getIncidenceRateError();
+		double bErE = setupB.getExposureRateError();
 		return (aIrE <= bIrE && aErE <= bErE) && (aIrE < bIrE || aErE < bErE);
 	}
 

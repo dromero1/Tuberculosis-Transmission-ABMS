@@ -1,4 +1,3 @@
 PARAMETER_ID,TOLERANCE,LOWER_BOUND,UPPER_BOUND
 averageRoomVentilationRate,0.1,0.0,10.0
 infectionProbability,0.1,0.0,1.0
-treatmentDropoutRate,0.1,0.0,1.0
