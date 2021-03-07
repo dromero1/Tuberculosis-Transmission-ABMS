@@ -209,6 +209,7 @@ public class Calibrator {
 	 */
 	private void resetMetrics() {
 		this.incidenceRates = new ArrayList<>();
+		this.exposureRates = new ArrayList<>();
 	}
 
 }
