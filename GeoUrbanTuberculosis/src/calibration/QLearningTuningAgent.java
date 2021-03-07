@@ -189,10 +189,6 @@ public class QLearningTuningAgent {
 		this.updateCounter++;
 		// Update epsilon
 		updateEpsilon();
-		// Check parameter change
-		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
-			resetCurrentParameter();
-		}
 		// Debugging only
 		if (DEBUG) {
 			double incidenceRateError = calibrationErrors.getFirst();
@@ -203,6 +199,10 @@ public class QLearningTuningAgent {
 					reward);
 			System.out.printf("Param = %s, Value = %.4f, Q-value = %.4f%n",
 					this.currentParameter, lastValue, qValue);
+		}
+		// Check parameter change
+		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
+			resetCurrentParameter();
 		}
 	}
 
