@@ -16,6 +16,11 @@ public class QLearningTuningAgent {
 	public static final boolean DEBUG = true;
 
 	/**
+	 * Multi-objective flag
+	 */
+	public static final boolean MULTIOBJECTIVE_FLAG = false;
+
+	/**
 	 * Similarity threshold
 	 */
 	public static final double SIMILARITY_THRESHOLD = 1e-10;
@@ -51,6 +56,11 @@ public class QLearningTuningAgent {
 	private double discountFactor;
 
 	/**
+	 * Last best calibration error
+	 */
+	private double lastBestCalibrationError;
+
+	/**
 	 * Parameters' tags
 	 */
 	private List<String> parametersTags;
@@ -79,6 +89,7 @@ public class QLearningTuningAgent {
 		this.discountFactor = discountFactor;
 		this.qValues = new HashMap<>();
 		this.paretoOptimalSetups = new ArrayList<>();
+		this.lastBestCalibrationError = Double.POSITIVE_INFINITY;
 		this.parametersTags = new ArrayList<>();
 	}
 
@@ -204,6 +215,13 @@ public class QLearningTuningAgent {
 		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
 			resetCurrentParameter();
 		}
+		// Update last best calibration error
+		if (!MULTIOBJECTIVE_FLAG) {
+			double calibrationError = calibrationErrors.getFirst();
+			if (calibrationError < this.lastBestCalibrationError) {
+				this.lastBestCalibrationError = calibrationError;
+			}
+		}
 	}
 
 	/**
@@ -214,33 +232,44 @@ public class QLearningTuningAgent {
 	 */
 	private double computeReward(Pair<Double, Double> calibrationErrors,
 			double parameterValue) {
-		ParetoOptimalSetup currentSetup = new ParetoOptimalSetup(
-				this.currentParameter, parameterValue, calibrationErrors);
-		if (this.paretoOptimalSetups.isEmpty()) {
-			this.paretoOptimalSetups.add(currentSetup);
-			return 0.0;
-		} else {
-			List<ParetoOptimalSetup> dominatedSolutions = new ArrayList<>();
-			for (int i = 0; i < this.paretoOptimalSetups.size(); i++) {
-				ParetoOptimalSetup paretoSetup = this.paretoOptimalSetups
-						.get(i);
-				if (dominates(currentSetup, paretoSetup)) {
-					dominatedSolutions.add(paretoSetup);
-				} else if (dominates(paretoSetup, currentSetup)) {
-					if (currentSetup.isAlmostTheSameAs(paretoSetup)) {
-						return 0.02;
-					} else {
-						return -1.0;
+		if (MULTIOBJECTIVE_FLAG) {
+			ParetoOptimalSetup currentSetup = new ParetoOptimalSetup(
+					this.currentParameter, parameterValue, calibrationErrors);
+			if (this.paretoOptimalSetups.isEmpty()) {
+				this.paretoOptimalSetups.add(currentSetup);
+				return 0.0;
+			} else {
+				List<ParetoOptimalSetup> dominatedSolutions = new ArrayList<>();
+				for (int i = 0; i < this.paretoOptimalSetups.size(); i++) {
+					ParetoOptimalSetup paretoSetup = this.paretoOptimalSetups
+							.get(i);
+					if (dominates(currentSetup, paretoSetup)) {
+						dominatedSolutions.add(paretoSetup);
+					} else if (dominates(paretoSetup, currentSetup)) {
+						if (currentSetup.isAlmostTheSameAs(paretoSetup)) {
+							return 0.02;
+						} else {
+							return -1.0;
+						}
 					}
 				}
+				for (ParetoOptimalSetup dominatedSolution : dominatedSolutions) {
+					this.paretoOptimalSetups.remove(dominatedSolution);
+				}
+				if (!this.paretoOptimalSetups.contains(currentSetup)) {
+					this.paretoOptimalSetups.add(currentSetup);
+				}
+				return 1.0;
 			}
-			for (ParetoOptimalSetup dominatedSolution : dominatedSolutions) {
-				this.paretoOptimalSetups.remove(dominatedSolution);
+		} else {
+			double calibrationError = calibrationErrors.getFirst();
+			if (this.lastBestCalibrationError == Double.POSITIVE_INFINITY
+					|| Math.abs(calibrationError
+							- this.lastBestCalibrationError) < ParetoOptimalSetup.SIMILARITY_THRESHOLD) {
+				return 0;
+			} else {
+				return (this.lastBestCalibrationError - calibrationError);
 			}
-			if (!this.paretoOptimalSetups.contains(currentSetup)) {
-				this.paretoOptimalSetups.add(currentSetup);
-			}
-			return 1.0;
 		}
 	}
 
