@@ -211,16 +211,16 @@ public class QLearningTuningAgent {
 			System.out.printf("Param = %s, Value = %.4f, Q-value = %.4f%n",
 					this.currentParameter, lastValue, qValue);
 		}
-		// Check parameter change
-		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
-			resetCurrentParameter();
-		}
 		// Update last best calibration error
 		if (!MULTIOBJECTIVE_FLAG) {
 			double calibrationError = calibrationErrors.getFirst();
 			if (calibrationError < this.lastBestCalibrationError) {
 				this.lastBestCalibrationError = calibrationError;
 			}
+		}
+		// Check parameter change
+		if (this.updateCounter >= Calibrator.CALIBRATIONS_BEFORE_PARAMETER_SWAP) {
+			resetCurrentParameter();
 		}
 	}
 
