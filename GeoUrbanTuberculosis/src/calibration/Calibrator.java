@@ -174,7 +174,8 @@ public class Calibrator {
 		for (double exposureRate : this.exposureRates) {
 			stats.addValue(Math.abs(exposureRate - exposureGoal));
 		}
-		double exposureMAD = stats.getPercentile(50);
+		//double exposureMAD = stats.getPercentile(50);
+		double exposureMAD = 0.0;
 		// Debugging only
 		if (DEBUG) {
 			System.out.printf(
