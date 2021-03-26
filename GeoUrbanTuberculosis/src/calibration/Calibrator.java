@@ -178,7 +178,7 @@ public class Calibrator {
 		// Debugging only
 		if (DEBUG) {
 			System.out.printf(
-					"> Num. incidence rates = %d, MADi = %.4f, MADe = %.4f%n",
+					"> Num. incidence rates = %d | MADi = %.4f | MADe = %.4f%n",
 					this.incidenceRates.size(), incidenceMAD, exposureMAD);
 		}
 		return new Pair<>(incidenceMAD, exposureMAD);
