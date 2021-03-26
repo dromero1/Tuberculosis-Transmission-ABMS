@@ -58,7 +58,7 @@
 		defaultValue="0.1" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 	<parameter name="discountFactor"
-		displayName="Discount factor" type="double" defaultValue="0.7"
+		displayName="Discount factor" type="double" defaultValue="0.8"
 		isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter" />
 </parameters>
