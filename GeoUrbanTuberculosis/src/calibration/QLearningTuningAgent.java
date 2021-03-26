@@ -205,7 +205,7 @@ public class QLearningTuningAgent {
 			double incidenceRateError = calibrationErrors.getFirst();
 			double exposureRateError = calibrationErrors.getSecond();
 			System.out.printf(
-					"> %d - Error IrE = %.4f | Error ErE = %.4f | Reward = %.4f, ",
+					"> %d - Error IrE = %.4f | Error ErE = %.4f | Reward = %.4f | ",
 					this.updateCounter, incidenceRateError, exposureRateError,
 					reward);
 			System.out.printf("Param = %s | Value = %.4f | Q-value = %.4f%n",
